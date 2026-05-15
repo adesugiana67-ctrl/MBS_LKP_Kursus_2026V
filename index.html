@@ -1,17 +1,1564 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
-    <meta name="description" content="Aplikasi Manajemen Kontak - CRUD responsive untuk semua device" />
-    <meta name="theme-color" content="#1e40af" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="description" content="Aplikasi Manajemen Kontak - CRUD responsive untuk semua device">
+    <meta name="theme-color" content="#1e40af">
+    <title>Manajemen Kontak - CRUD App</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <title>Manajemen Kontak - CRUD App</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+    <style>
+        /* ===== RESET & BASE ===== */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f0f2f5;
+            color: #1f2937;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+        a { text-decoration: none; color: inherit; }
+        button { cursor: pointer; border: none; font-family: inherit; }
+        input, textarea, select { font-family: inherit; }
+        img { max-width: 100%; }
+
+        /* ===== SCROLLBAR ===== */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 10px; }
+
+        /* ===== ANIMATIONS ===== */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes scaleIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+
+        .fade-in { animation: fadeIn 0.3s ease-out; }
+        .slide-up { animation: slideUp 0.4s ease-out; }
+        .slide-down { animation: slideDown 0.3s ease-out; }
+        .scale-in { animation: scaleIn 0.3s ease-out; }
+
+        /* ===== LAYOUT ===== */
+        .app-container { display: flex; min-height: 100vh; }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            width: 260px;
+            background: #fff;
+            border-right: 1px solid #e5e7eb;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0; left: 0; bottom: 0;
+            z-index: 100;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.1);
+        }
+        .sidebar.open { transform: translateX(0); }
+        .sidebar-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(4px);
+            z-index: 99;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .sidebar-overlay.active { opacity: 1; pointer-events: auto; }
+
+        .sidebar-logo {
+            padding: 20px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .sidebar-logo-icon {
+            width: 42px; height: 42px;
+            background: linear-gradient(135deg, #3b82f6, #6366f1);
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px;
+            box-shadow: 0 4px 12px rgba(59,130,246,0.3);
+        }
+        .sidebar-logo-text h2 { font-size: 14px; font-weight: 700; color: #1f2937; }
+        .sidebar-logo-text p { font-size: 10px; color: #9ca3af; }
+
+        .sidebar-nav { flex: 1; padding: 12px; }
+        .sidebar-nav-item {
+            width: 100%;
+            display: flex; align-items: center; gap: 12px;
+            padding: 12px 14px;
+            border-radius: 12px;
+            background: transparent;
+            color: #6b7280;
+            font-size: 13px;
+            font-weight: 500;
+            text-align: left;
+            transition: all 0.2s ease;
+            margin-bottom: 4px;
+        }
+        .sidebar-nav-item:hover { background: #f3f4f6; color: #374151; }
+        .sidebar-nav-item.active {
+            background: #eff6ff;
+            color: #1d4ed8;
+            box-shadow: 0 1px 3px rgba(59,130,246,0.1);
+        }
+        .sidebar-nav-item .nav-icon { font-size: 18px; }
+        .sidebar-nav-item .nav-desc { font-size: 10px; color: #9ca3af; display: block; }
+
+        .sidebar-footer { padding: 12px; border-top: 1px solid #e5e7eb; }
+        .sidebar-footer button {
+            width: 100%;
+            display: flex; align-items: center; gap: 8px;
+            padding: 10px 14px;
+            border-radius: 10px;
+            background: transparent;
+            color: #ef4444;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        .sidebar-footer button:hover { background: #fef2f2; }
+        .sidebar-footer .credit { text-align: center; font-size: 10px; color: #d1d5db; padding: 8px 0; }
+
+        /* ===== MAIN CONTENT ===== */
+        .main-content { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+
+        /* ===== HEADER ===== */
+        .header {
+            background: linear-gradient(135deg, #1e40af, #4338ca);
+            color: #fff;
+            padding: 0 16px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            box-shadow: 0 4px 20px rgba(30,64,175,0.3);
+        }
+        .header-left { display: flex; align-items: center; gap: 10px; }
+        .hamburger {
+            width: 38px; height: 38px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            font-size: 18px;
+            transition: background 0.2s;
+        }
+        .hamburger:hover { background: rgba(255,255,255,0.2); }
+        .header-title h1 { font-size: 15px; font-weight: 700; }
+        .header-title p { font-size: 10px; color: rgba(255,255,255,0.6); }
+        .header-right { display: flex; align-items: center; gap: 8px; }
+        .header-btn {
+            padding: 6px 12px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.15);
+            color: #fff;
+            font-size: 12px;
+            font-weight: 500;
+            display: flex; align-items: center; gap: 6px;
+            transition: background 0.2s;
+        }
+        .header-btn:hover { background: rgba(255,255,255,0.25); }
+
+        /* ===== PAGE CONTENT ===== */
+        .page-content { flex: 1; padding: 16px; max-width: 1200px; margin: 0 auto; width: 100%; }
+        .page-title { font-size: 18px; font-weight: 700; color: #1f2937; margin-bottom: 4px; }
+        .page-subtitle { font-size: 12px; color: #9ca3af; margin-bottom: 16px; }
+
+        /* ===== DASHBOARD STATS ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .stat-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+            border: 1px solid #f3f4f6;
+            transition: all 0.2s ease;
+        }
+        .stat-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); transform: translateY(-2px); }
+        .stat-icon {
+            width: 38px; height: 38px;
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        .stat-value { font-size: 24px; font-weight: 800; }
+        .stat-label { font-size: 11px; color: #9ca3af; margin-top: 2px; }
+
+        .stat-blue .stat-icon { background: #eff6ff; }
+        .stat-blue .stat-value { color: #1d4ed8; }
+        .stat-red .stat-icon { background: #fef2f2; }
+        .stat-red .stat-value { color: #dc2626; }
+        .stat-green .stat-icon { background: #f0fdf4; }
+        .stat-green .stat-value { color: #16a34a; }
+        .stat-purple .stat-icon { background: #faf5ff; }
+        .stat-purple .stat-value { color: #9333ea; }
+
+        /* ===== CHART BAR ===== */
+        .chart-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+            border: 1px solid #f3f4f6;
+            margin-bottom: 16px;
+        }
+        .chart-title { font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 12px; }
+        .chart-bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+        .chart-bar-icon { font-size: 16px; }
+        .chart-bar-label { font-size: 12px; color: #6b7280; width: 80px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .chart-bar-track { flex: 1; height: 10px; background: #f3f4f6; border-radius: 10px; overflow: hidden; }
+        .chart-bar-fill { height: 100%; border-radius: 10px; transition: width 0.6s ease; }
+        .chart-bar-count { font-size: 11px; color: #9ca3af; width: 50px; text-align: right; font-weight: 500; }
+
+        .bar-red { background: linear-gradient(90deg, #f87171, #ef4444); }
+        .bar-green { background: linear-gradient(90deg, #4ade80, #22c55e); }
+        .bar-blue { background: linear-gradient(90deg, #60a5fa, #3b82f6); }
+        .bar-gray { background: linear-gradient(90deg, #9ca3af, #6b7280); }
+
+        /* ===== RECENT LIST ===== */
+        .recent-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px;
+            border-radius: 12px;
+            transition: background 0.2s;
+        }
+        .recent-item:hover { background: #f9fafb; }
+        .recent-avatar {
+            width: 36px; height: 36px;
+            background: linear-gradient(135deg, #60a5fa, #6366f1);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: #fff;
+            font-weight: 700;
+            font-size: 13px;
+            flex-shrink: 0;
+        }
+        .recent-info { flex: 1; min-width: 0; }
+        .recent-name { font-size: 13px; font-weight: 600; color: #1f2937; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .recent-email { font-size: 11px; color: #9ca3af; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .recent-date { font-size: 10px; color: #d1d5db; flex-shrink: 0; }
+
+        /* ===== SEARCH & FILTER ===== */
+        .search-container { margin-bottom: 16px; }
+        .search-box {
+            position: relative;
+            margin-bottom: 10px;
+        }
+        .search-box input {
+            width: 100%;
+            padding: 12px 16px 12px 42px;
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            font-size: 14px;
+            background: #fff;
+            color: #1f2937;
+            transition: all 0.2s;
+            outline: none;
+        }
+        .search-box input:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.15); }
+        .search-box input::placeholder { color: #9ca3af; }
+        .search-icon {
+            position: absolute;
+            left: 14px; top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            font-size: 16px;
+            pointer-events: none;
+        }
+        .search-clear {
+            position: absolute;
+            right: 10px; top: 50%;
+            transform: translateY(-50%);
+            width: 28px; height: 28px;
+            border-radius: 50%;
+            background: #f3f4f6;
+            color: #6b7280;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+        .search-clear.visible { display: flex; }
+
+        .filter-chips {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+            -webkit-overflow-scrolling: touch;
+        }
+        .filter-chips::-webkit-scrollbar { display: none; }
+        .filter-chip {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            white-space: nowrap;
+            background: #fff;
+            color: #6b7280;
+            border: 1px solid #e5e7eb;
+            transition: all 0.2s;
+            flex-shrink: 0;
+            display: flex; align-items: center; gap: 4px;
+        }
+        .filter-chip:hover { background: #f9fafb; }
+        .filter-chip.active {
+            background: #2563eb;
+            color: #fff;
+            border-color: #2563eb;
+            box-shadow: 0 2px 8px rgba(37,99,235,0.3);
+        }
+
+        /* ===== CONTACT CARDS ===== */
+        .contacts-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+        .contact-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 14px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+            border: 1px solid #f3f4f6;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .contact-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); border-color: #bfdbfe; }
+        .contact-card-top { display: flex; align-items: flex-start; gap: 12px; }
+        .contact-avatar {
+            width: 44px; height: 44px;
+            background: linear-gradient(135deg, #60a5fa, #6366f1);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: #fff;
+            font-weight: 700;
+            font-size: 16px;
+            flex-shrink: 0;
+            box-shadow: 0 2px 8px rgba(99,102,241,0.3);
+        }
+        .contact-info { flex: 1; min-width: 0; }
+        .contact-name-row { display: flex; align-items: center; gap: 8px; margin-bottom: 2px; flex-wrap: wrap; }
+        .contact-name { font-size: 14px; font-weight: 600; color: #1f2937; }
+        .contact-badge {
+            display: inline-flex; align-items: center; gap: 3px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 500;
+            border: 1px solid;
+        }
+        .badge-keluarga { background: #fef2f2; color: #dc2626; border-color: #fecaca; }
+        .badge-teman { background: #f0fdf4; color: #16a34a; border-color: #bbf7d0; }
+        .badge-rekan_kerja { background: #eff6ff; color: #2563eb; border-color: #bfdbfe; }
+        .badge-lainnya { background: #f9fafb; color: #6b7280; border-color: #e5e7eb; }
+
+        .contact-detail { font-size: 12px; color: #6b7280; display: flex; align-items: center; gap: 6px; margin-top: 3px; }
+        .contact-detail span.detail-icon { font-size: 12px; flex-shrink: 0; }
+        .contact-detail span.detail-text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        .contact-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex-shrink: 0;
+        }
+        .contact-action-btn {
+            width: 32px; height: 32px;
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            background: transparent;
+            color: #9ca3af;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .contact-action-btn.edit:hover { background: #eff6ff; color: #2563eb; }
+        .contact-action-btn.delete:hover { background: #fef2f2; color: #dc2626; }
+
+        /* ===== EMPTY STATE ===== */
+        .empty-state {
+            text-align: center;
+            padding: 48px 24px;
+        }
+        .empty-state-icon {
+            width: 80px; height: 80px;
+            background: #f3f4f6;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 36px;
+            margin: 0 auto 16px;
+        }
+        .empty-state h3 { font-size: 16px; font-weight: 600; color: #374151; margin-bottom: 4px; }
+        .empty-state p { font-size: 13px; color: #9ca3af; max-width: 280px; margin: 0 auto; }
+
+        /* ===== BUTTONS ===== */
+        .btn-primary {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #2563eb, #4f46e5);
+            color: #fff;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(37,99,235,0.3);
+            transition: all 0.2s;
+        }
+        .btn-primary:hover { box-shadow: 0 6px 16px rgba(37,99,235,0.4); transform: translateY(-1px); }
+        .btn-primary:active { transform: scale(0.97); }
+
+        .btn-secondary {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 10px 20px;
+            background: #fff;
+            color: #6b7280;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .btn-secondary:hover { background: #f9fafb; }
+
+        .btn-danger {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 10px 20px;
+            background: #dc2626;
+            color: #fff;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .btn-danger:hover { background: #b91c1c; }
+
+        .contacts-header {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        .contacts-header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .contact-count { font-size: 11px; color: #9ca3af; padding: 0 2px; }
+
+        /* ===== FAB (Floating Action Button) ===== */
+        .fab {
+            position: fixed;
+            bottom: 20px; right: 20px;
+            width: 56px; height: 56px;
+            background: linear-gradient(135deg, #2563eb, #4f46e5);
+            color: #fff;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 6px 20px rgba(37,99,235,0.4);
+            z-index: 40;
+            transition: all 0.2s;
+        }
+        .fab:hover { transform: scale(1.1); box-shadow: 0 8px 24px rgba(37,99,235,0.5); }
+        .fab:active { transform: scale(0.95); }
+        .fab.hidden { display: none; }
+
+        /* ===== MODAL ===== */
+        .modal-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            z-index: 200;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        .modal-content {
+            background: #fff;
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            border-radius: 20px 20px 0 0;
+            overflow-y: auto;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+        .modal-overlay.active .modal-content { transform: translateY(0); }
+        .modal-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 16px 20px;
+            border-bottom: 1px solid #f3f4f6;
+            position: sticky; top: 0;
+            background: #fff;
+            z-index: 1;
+        }
+        .modal-header h2 { font-size: 15px; font-weight: 700; color: #1f2937; }
+        .modal-close {
+            width: 32px; height: 32px;
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            background: transparent;
+            color: #9ca3af;
+            font-size: 18px;
+            transition: all 0.2s;
+        }
+        .modal-close:hover { background: #f3f4f6; color: #374151; }
+        .modal-body { padding: 16px 20px 24px; }
+
+        /* ===== FORM ===== */
+        .form-group { margin-bottom: 16px; }
+        .form-label {
+            display: flex; align-items: center; gap: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 6px;
+        }
+        .form-label .required { color: #ef4444; }
+        .form-input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 14px;
+            background: #f9fafb;
+            color: #1f2937;
+            transition: all 0.2s;
+            outline: none;
+        }
+        .form-input:focus { border-color: #3b82f6; background: #fff; box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }
+        .form-input::placeholder { color: #9ca3af; }
+        .form-input.error { border-color: #ef4444; background: #fef2f2; }
+        .form-error { font-size: 11px; color: #ef4444; margin-top: 4px; display: none; }
+        .form-error.visible { display: block; }
+        textarea.form-input { resize: none; min-height: 60px; }
+
+        .kategori-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+        .kategori-btn {
+            display: flex; align-items: center; gap: 8px;
+            padding: 10px 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            background: #f9fafb;
+            color: #6b7280;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .kategori-btn:hover { border-color: #d1d5db; }
+        .kategori-btn.active {
+            border-color: #3b82f6;
+            background: #eff6ff;
+            color: #1d4ed8;
+        }
+
+        .form-actions { display: flex; gap: 10px; margin-top: 20px; }
+        .form-actions button { flex: 1; }
+
+        /* ===== DETAIL VIEW ===== */
+        .detail-avatar-section { text-align: center; padding-bottom: 16px; border-bottom: 1px solid #f3f4f6; margin-bottom: 16px; }
+        .detail-avatar {
+            width: 64px; height: 64px;
+            background: linear-gradient(135deg, #60a5fa, #6366f1);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: #fff;
+            font-weight: 700;
+            font-size: 24px;
+            margin: 0 auto 10px;
+            box-shadow: 0 4px 12px rgba(99,102,241,0.3);
+        }
+        .detail-name { font-size: 18px; font-weight: 700; color: #1f2937; }
+        .detail-badge {
+            display: inline-flex; align-items: center; gap: 4px;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+            margin-top: 6px;
+        }
+        .detail-row {
+            display: flex; align-items: flex-start; gap: 12px;
+            padding: 12px;
+            background: #f9fafb;
+            border-radius: 12px;
+            margin-bottom: 8px;
+        }
+        .detail-row-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+        .detail-row-label { font-size: 10px; color: #9ca3af; text-transform: uppercase; letter-spacing: 0.5px; }
+        .detail-row-value { font-size: 13px; color: #374151; word-break: break-all; }
+        .detail-row-value a { color: #2563eb; }
+        .detail-actions { display: flex; gap: 8px; margin-top: 16px; }
+        .detail-actions button { flex: 1; justify-content: center; }
+
+        /* ===== DELETE CONFIRM ===== */
+        .delete-confirm { text-align: center; }
+        .delete-confirm-icon {
+            width: 64px; height: 64px;
+            background: #fef2f2;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 28px;
+            margin: 0 auto 16px;
+        }
+        .delete-confirm p { font-size: 14px; color: #6b7280; margin-bottom: 4px; }
+        .delete-confirm .name { font-weight: 700; color: #1f2937; }
+        .delete-confirm .warning { font-size: 12px; color: #ef4444; margin-top: 8px; }
+        .delete-actions { display: flex; gap: 10px; margin-top: 20px; }
+        .delete-actions button { flex: 1; justify-content: center; }
+
+        /* ===== ABOUT PAGE ===== */
+        .about-hero {
+            background: linear-gradient(135deg, #1e40af, #4338ca);
+            border-radius: 16px;
+            padding: 24px 20px;
+            color: #fff;
+            margin-bottom: 16px;
+        }
+        .about-hero h2 { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+        .about-hero p { font-size: 13px; color: rgba(255,255,255,0.7); line-height: 1.6; }
+        .about-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+        .about-tag {
+            padding: 4px 10px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 12px;
+            font-size: 11px;
+            backdrop-filter: blur(4px);
+        }
+
+        .about-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+            border: 1px solid #f3f4f6;
+            margin-bottom: 16px;
+        }
+        .about-card h3 { font-size: 14px; font-weight: 700; color: #1f2937; margin-bottom: 12px; }
+
+        .feature-grid { display: grid; grid-template-columns: 1fr; gap: 8px; }
+        .feature-item {
+            display: flex; align-items: flex-start; gap: 10px;
+            padding: 10px;
+            background: #f9fafb;
+            border-radius: 12px;
+            transition: background 0.2s;
+        }
+        .feature-item:hover { background: #eff6ff; }
+        .feature-icon { font-size: 18px; flex-shrink: 0; }
+        .feature-title { font-size: 13px; font-weight: 600; color: #374151; }
+        .feature-desc { font-size: 11px; color: #9ca3af; }
+
+        .code-block {
+            background: #111827;
+            color: #4ade80;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            line-height: 1.6;
+            white-space: pre;
+            margin-top: 8px;
+        }
+
+        .step-card {
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 10px;
+            border: 1px solid;
+        }
+        .step-card h4 { font-size: 13px; font-weight: 700; margin-bottom: 8px; }
+        .step-blue { background: #eff6ff; border-color: #bfdbfe; }
+        .step-blue h4 { color: #1d4ed8; }
+        .step-green { background: #f0fdf4; border-color: #bbf7d0; }
+        .step-green h4 { color: #16a34a; }
+        .step-purple { background: #faf5ff; border-color: #e9d5ff; }
+        .step-purple h4 { color: #9333ea; }
+
+        .device-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
+        .device-card {
+            text-align: center;
+            padding: 16px;
+            background: linear-gradient(135deg, #f9fafb, #f3f4f6);
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+        }
+        .device-card .device-icon { font-size: 32px; margin-bottom: 8px; }
+        .device-card .device-name { font-size: 14px; font-weight: 700; color: #374151; }
+        .device-card .device-size { font-size: 11px; color: #3b82f6; font-family: monospace; margin-top: 4px; }
+        .device-card .device-desc { font-size: 11px; color: #9ca3af; margin-top: 6px; line-height: 1.5; }
+
+        /* ===== TOAST ===== */
+        .toast-container {
+            position: fixed;
+            top: 70px; right: 16px;
+            z-index: 300;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .toast {
+            padding: 10px 16px;
+            background: #1f2937;
+            color: #fff;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            animation: slideDown 0.3s ease-out;
+            display: flex; align-items: center; gap: 8px;
+            max-width: 300px;
+        }
+        .toast.success { background: #059669; }
+        .toast.error { background: #dc2626; }
+        .toast.info { background: #2563eb; }
+
+        /* ===== RESPONSIVE ===== */
+        /* Tablet */
+        @media (min-width: 640px) {
+            .sidebar { width: 280px; }
+            .header { padding: 0 24px; height: 64px; }
+            .header-title h1 { font-size: 18px; }
+            .page-content { padding: 24px; }
+            .page-title { font-size: 22px; }
+            .stats-grid { grid-template-columns: repeat(4, 1fr); }
+            .contacts-grid { grid-template-columns: repeat(2, 1fr); }
+            .feature-grid { grid-template-columns: repeat(2, 1fr); }
+            .device-grid { grid-template-columns: repeat(3, 1fr); }
+            .contacts-header { flex-direction: row; align-items: center; justify-content: space-between; }
+            .modal-overlay { align-items: center; padding: 20px; }
+            .modal-content { border-radius: 20px; max-height: 85vh; transform: translateY(20px); opacity: 0; }
+            .modal-overlay.active .modal-content { transform: translateY(0); opacity: 1; }
+            .fab { display: none; }
+        }
+
+        /* Desktop */
+        @media (min-width: 1024px) {
+            .sidebar {
+                transform: translateX(0);
+                position: sticky;
+                box-shadow: none;
+            }
+            .sidebar-overlay { display: none !important; }
+            .hamburger { display: none; }
+            .contacts-grid { grid-template-columns: repeat(3, 1fr); }
+            .page-content { padding: 32px; }
+        }
+
+        /* Mobile input fix */
+        @media (max-width: 640px) {
+            input, textarea, select { font-size: 16px !important; }
+        }
+
+        /* Page visibility */
+        .page { display: none; }
+        .page.active { display: block; }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Overlay -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-logo">
+                <div class="sidebar-logo-icon">📇</div>
+                <div class="sidebar-logo-text">
+                    <h2>Kontak App</h2>
+                    <p>v1.0 • Responsive</p>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <button class="sidebar-nav-item active" data-page="dashboard" onclick="navigateTo('dashboard')">
+                    <span class="nav-icon">📊</span>
+                    <div>
+                        <span>Dashboard</span>
+                        <span class="nav-desc">Ringkasan data</span>
+                    </div>
+                </button>
+                <button class="sidebar-nav-item" data-page="contacts" onclick="navigateTo('contacts')">
+                    <span class="nav-icon">👥</span>
+                    <div>
+                        <span>Daftar Kontak</span>
+                        <span class="nav-desc">Kelola semua kontak</span>
+                    </div>
+                </button>
+                <button class="sidebar-nav-item" data-page="about" onclick="navigateTo('about')">
+                    <span class="nav-icon">ℹ️</span>
+                    <div>
+                        <span>Tentang</span>
+                        <span class="nav-desc">Info & panduan MySQL</span>
+                    </div>
+                </button>
+            </nav>
+            <div class="sidebar-footer">
+                <button onclick="resetDatabase()">🔄 Reset Database</button>
+                <div class="credit">Dibuat dengan ❤️ HTML + CSS + JS</div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <button class="hamburger" onclick="toggleSidebar()">☰</button>
+                    <div class="header-title">
+                        <h1>Manajemen Kontak</h1>
+                        <p>CRUD App • Responsive</p>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <button class="header-btn" onclick="navigateTo('about')">ℹ️ Tentang</button>
+                </div>
+            </header>
+
+            <!-- ===== DASHBOARD PAGE ===== -->
+            <div class="page active" id="page-dashboard">
+                <div class="page-content">
+                    <h2 class="page-title">📊 Dashboard</h2>
+                    <p class="page-subtitle">Ringkasan data kontak Anda</p>
+                    <div id="dashboardContent"></div>
+                </div>
+            </div>
+
+            <!-- ===== CONTACTS PAGE ===== -->
+            <div class="page" id="page-contacts">
+                <div class="page-content">
+                    <div class="contacts-header">
+                        <div class="contacts-header-top">
+                            <div>
+                                <h2 class="page-title">👥 Daftar Kontak</h2>
+                                <p class="page-subtitle" id="contactCount">0 kontak tersimpan</p>
+                            </div>
+                            <button class="btn-primary" onclick="openAddForm()">
+                                <span>＋</span> Tambah Kontak
+                            </button>
+                        </div>
+                    </div>
+                    <div class="search-container">
+                        <div class="search-box">
+                            <span class="search-icon">🔍</span>
+                            <input type="text" id="searchInput" placeholder="Cari nama, email, telepon, atau alamat..." oninput="handleSearch()">
+                            <button class="search-clear" id="searchClear" onclick="clearSearch()">✕</button>
+                        </div>
+                        <div class="filter-chips" id="filterChips">
+                            <button class="filter-chip active" data-filter="semua" onclick="setFilter('semua')">📋 Semua</button>
+                            <button class="filter-chip" data-filter="keluarga" onclick="setFilter('keluarga')">👨‍👩‍👧‍👦 Keluarga</button>
+                            <button class="filter-chip" data-filter="teman" onclick="setFilter('teman')">🤝 Teman</button>
+                            <button class="filter-chip" data-filter="rekan_kerja" onclick="setFilter('rekan_kerja')">💼 Rekan Kerja</button>
+                            <button class="filter-chip" data-filter="lainnya" onclick="setFilter('lainnya')">📌 Lainnya</button>
+                        </div>
+                    </div>
+                    <div id="contactsList"></div>
+                </div>
+            </div>
+
+            <!-- ===== ABOUT PAGE ===== -->
+            <div class="page" id="page-about">
+                <div class="page-content">
+                    <h2 class="page-title">ℹ️ Tentang Aplikasi</h2>
+                    <p class="page-subtitle">Informasi & panduan integrasi MySQL</p>
+
+                    <div class="about-hero">
+                        <h2>📇 Aplikasi Manajemen Kontak</h2>
+                        <p>Aplikasi CRUD (Create, Read, Update, Delete) yang responsif dan dapat diakses di semua perangkat — dari smartphone hingga desktop.</p>
+                        <div class="about-tags">
+                            <span class="about-tag">🌐 HTML5</span>
+                            <span class="about-tag">🎨 CSS3</span>
+                            <span class="about-tag">⚡ JavaScript</span>
+                            <span class="about-tag">📱 Responsive</span>
+                            <span class="about-tag">🗄️ localStorage</span>
+                        </div>
+                    </div>
+
+                    <div class="about-card">
+                        <h3>✨ Fitur Utama</h3>
+                        <div class="feature-grid">
+                            <div class="feature-item"><span class="feature-icon">➕</span><div><div class="feature-title">Tambah Kontak</div><div class="feature-desc">Buat kontak baru dengan data lengkap</div></div></div>
+                            <div class="feature-item"><span class="feature-icon">👁️</span><div><div class="feature-title">Lihat Detail</div><div class="feature-desc">Tampilkan informasi kontak secara detail</div></div></div>
+                            <div class="feature-item"><span class="feature-icon">✏️</span><div><div class="feature-title">Edit Kontak</div><div class="feature-desc">Ubah data kontak yang sudah ada</div></div></div>
+                            <div class="feature-item"><span class="feature-icon">🗑️</span><div><div class="feature-title">Hapus Kontak</div><div class="feature-desc">Hapus kontak yang tidak diperlukan</div></div></div>
+                            <div class="feature-item"><span class="feature-icon">🔍</span><div><div class="feature-title">Pencarian</div><div class="feature-desc">Cari kontak berdasarkan nama, email, dll</div></div></div>
+                            <div class="feature-item"><span class="feature-icon">🏷️</span><div><div class="feature-title">Filter Kategori</div><div class="feature-desc">Filter berdasarkan kategori kontak</div></div></div>
+                            <div class="feature-item"><span class="feature-icon">📊</span><div><div class="feature-title">Dashboard</div><div class="feature-desc">Ringkasan statistik kontak</div></div></div>
+                            <div class="feature-item"><span class="feature-icon">📱</span><div><div class="feature-title">Responsive</div><div class="feature-desc">Tampilan optimal di semua ukuran layar</div></div></div>
+                        </div>
+                    </div>
+
+                    <div class="about-card">
+                        <h3>🗄️ Integrasi dengan MySQL</h3>
+                        <p style="font-size:13px;color:#6b7280;margin-bottom:12px;line-height:1.6;">
+                            Aplikasi ini menggunakan <strong>localStorage</strong> sebagai penyimpanan data lokal.
+                            Untuk menghubungkan ke MySQL, Anda memerlukan backend server. Berikut panduan singkatnya:
+                        </p>
+
+                        <div class="step-card step-blue">
+                            <h4>📋 Langkah 1: Buat Tabel MySQL</h4>
+                            <div class="code-block">CREATE DATABASE kontak_db;
+USE kontak_db;
+
+CREATE TABLE kontak (
+  id VARCHAR(36) PRIMARY KEY,
+  nama VARCHAR(100) NOT NULL,
+  email VARCHAR(100) NOT NULL,
+  telepon VARCHAR(20) NOT NULL,
+  alamat TEXT NOT NULL,
+  kategori ENUM('keluarga','teman',
+    'rekan_kerja','lainnya'),
+  tanggal_dibuat DATETIME
+    DEFAULT CURRENT_TIMESTAMP,
+  tanggal_diupdate DATETIME
+    DEFAULT CURRENT_TIMESTAMP
+    ON UPDATE CURRENT_TIMESTAMP
+);</div>
+                        </div>
+
+                        <div class="step-card step-green">
+                            <h4>🔧 Langkah 2: Buat REST API (Node.js + Express)</h4>
+                            <div class="code-block">// server.js
+const express = require('express');
+const mysql = require('mysql2/promise');
+const cors = require('cors');
+
+const app = express();
+app.use(cors());
+app.use(express.json());
+
+const pool = mysql.createPool({
+  host: 'localhost',
+  user: 'root',
+  password: 'password',
+  database: 'kontak_db'
+});
+
+// GET semua kontak
+app.get('/api/kontak', async (req, res) => {
+  const [rows] = await pool.query(
+    'SELECT * FROM kontak');
+  res.json(rows);
+});
+
+// POST kontak baru
+app.post('/api/kontak', async (req, res) => {
+  await pool.query(
+    'INSERT INTO kontak SET ?', req.body);
+  res.json({ success: true });
+});
+
+// PUT update kontak
+app.put('/api/kontak/:id', async (req, res) => {
+  await pool.query(
+    'UPDATE kontak SET ? WHERE id = ?',
+    [req.body, req.params.id]);
+  res.json({ success: true });
+});
+
+// DELETE kontak
+app.delete('/api/kontak/:id', async (req, res) => {
+  await pool.query(
+    'DELETE FROM kontak WHERE id = ?',
+    [req.params.id]);
+  res.json({ success: true });
+});
+
+app.listen(3001);</div>
+                        </div>
+
+                        <div class="step-card step-purple">
+                            <h4>🌐 Langkah 3: Hubungkan Frontend ke API</h4>
+                            <div class="code-block">// Ganti fungsi CRUD dengan fetch():
+
+// Ambil semua kontak
+async function ambilSemuaKontak() {
+  const res = await fetch(
+    'http://localhost:3001/api/kontak');
+  return res.json();
+}
+
+// Simpan kontak
+async function simpanKontak(kontak) {
+  const method = kontak.id ? 'PUT' : 'POST';
+  const url = kontak.id
+    ? `.../api/kontak/${kontak.id}`
+    : '.../api/kontak';
+  await fetch(url, {
+    method,
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify(kontak)
+  });
+}
+
+// Hapus kontak
+async function hapusKontak(id) {
+  await fetch(`.../api/kontak/${id}`, {
+    method: 'DELETE'
+  });
+}</div>
+                        </div>
+                    </div>
+
+                    <div class="about-card">
+                        <h3>📱 Responsif di Semua Perangkat</h3>
+                        <div class="device-grid">
+                            <div class="device-card">
+                                <div class="device-icon">📱</div>
+                                <div class="device-name">Smartphone</div>
+                                <div class="device-size">&lt; 640px</div>
+                                <div class="device-desc">Layout 1 kolom, sidebar slide, bottom sheet modal</div>
+                            </div>
+                            <div class="device-card">
+                                <div class="device-icon">📟</div>
+                                <div class="device-name">Tablet</div>
+                                <div class="device-size">640px - 1024px</div>
+                                <div class="device-desc">Layout 2 kolom, sidebar toggle, modal center</div>
+                            </div>
+                            <div class="device-card">
+                                <div class="device-icon">🖥️</div>
+                                <div class="device-name">Desktop</div>
+                                <div class="device-size">&gt; 1024px</div>
+                                <div class="device-desc">Layout 3 kolom, sidebar tetap, full features</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FAB -->
+    <button class="fab hidden" id="fab" onclick="openAddForm()">＋</button>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- ===== FORM MODAL ===== -->
+    <div class="modal-overlay" id="formModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="formModalTitle">➕ Tambah Kontak Baru</h2>
+                <button class="modal-close" onclick="closeModal('formModal')">✕</button>
+            </div>
+            <div class="modal-body">
+                <form id="contactForm" onsubmit="handleFormSubmit(event)">
+                    <div class="form-group">
+                        <label class="form-label">👤 Nama Lengkap <span class="required">*</span></label>
+                        <input type="text" class="form-input" id="formNama" placeholder="Masukkan nama lengkap">
+                        <div class="form-error" id="errorNama">Nama wajib diisi</div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">📧 Email <span class="required">*</span></label>
+                        <input type="email" class="form-input" id="formEmail" placeholder="contoh@email.com">
+                        <div class="form-error" id="errorEmail">Email wajib diisi</div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">📱 Telepon <span class="required">*</span></label>
+                        <input type="tel" class="form-input" id="formTelepon" placeholder="0812-xxxx-xxxx">
+                        <div class="form-error" id="errorTelepon">Nomor telepon wajib diisi</div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">🏷️ Kategori</label>
+                        <div class="kategori-grid">
+                            <button type="button" class="kategori-btn active" data-kat="keluarga" onclick="selectKategori(this)">👨‍👩‍👧‍👦 Keluarga</button>
+                            <button type="button" class="kategori-btn" data-kat="teman" onclick="selectKategori(this)">🤝 Teman</button>
+                            <button type="button" class="kategori-btn" data-kat="rekan_kerja" onclick="selectKategori(this)">💼 Rekan Kerja</button>
+                            <button type="button" class="kategori-btn" data-kat="lainnya" onclick="selectKategori(this)">📋 Lainnya</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">📍 Alamat <span class="required">*</span></label>
+                        <textarea class="form-input" id="formAlamat" rows="2" placeholder="Masukkan alamat lengkap"></textarea>
+                        <div class="form-error" id="errorAlamat">Alamat wajib diisi</div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary" onclick="closeModal('formModal')">Batal</button>
+                        <button type="submit" class="btn-primary" id="formSubmitBtn">➕ Tambah Kontak</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== DETAIL MODAL ===== -->
+    <div class="modal-overlay" id="detailModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>👤 Detail Kontak</h2>
+                <button class="modal-close" onclick="closeModal('detailModal')">✕</button>
+            </div>
+            <div class="modal-body" id="detailContent"></div>
+        </div>
+    </div>
+
+    <!-- ===== DELETE MODAL ===== -->
+    <div class="modal-overlay" id="deleteModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>⚠️ Konfirmasi Hapus</h2>
+                <button class="modal-close" onclick="closeModal('deleteModal')">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="delete-confirm" id="deleteContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===== DATA LAYER =====
+        const STORAGE_KEY = 'kontak_db';
+
+        const dataAwal = [
+            { id: '1', nama: 'Budi Santoso', email: 'budi.santoso@email.com', telepon: '0812-3456-7890', alamat: 'Jl. Merdeka No. 10, Jakarta Selatan', kategori: 'rekan_kerja', tanggalDibuat: '2025-01-15T08:00:00', tanggalDiupdate: '2025-01-15T08:00:00' },
+            { id: '2', nama: 'Siti Rahayu', email: 'siti.rahayu@email.com', telepon: '0857-1234-5678', alamat: 'Jl. Sudirman No. 25, Bandung', kategori: 'keluarga', tanggalDibuat: '2025-02-20T10:30:00', tanggalDiupdate: '2025-02-20T10:30:00' },
+            { id: '3', nama: 'Andi Wijaya', email: 'andi.wijaya@email.com', telepon: '0878-9012-3456', alamat: 'Jl. Gatot Subroto No. 5, Surabaya', kategori: 'teman', tanggalDibuat: '2025-03-10T14:15:00', tanggalDiupdate: '2025-03-10T14:15:00' },
+            { id: '4', nama: 'Dewi Lestari', email: 'dewi.lestari@email.com', telepon: '0821-5678-9012', alamat: 'Jl. Diponegoro No. 8, Yogyakarta', kategori: 'rekan_kerja', tanggalDibuat: '2025-04-05T09:45:00', tanggalDiupdate: '2025-04-05T09:45:00' },
+            { id: '5', nama: 'Rizky Pratama', email: 'rizky.pratama@email.com', telepon: '0838-2345-6789', alamat: 'Jl. Ahmad Yani No. 15, Semarang', kategori: 'teman', tanggalDibuat: '2025-05-12T16:00:00', tanggalDiupdate: '2025-05-12T16:00:00' },
+        ];
+
+        function ambilSemuaKontak() {
+            const data = localStorage.getItem(STORAGE_KEY);
+            if (!data) {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(dataAwal));
+                return dataAwal;
+            }
+            return JSON.parse(data);
+        }
+
+        function simpanKontak(kontak) {
+            const semua = ambilSemuaKontak();
+            const idx = semua.findIndex(k => k.id === kontak.id);
+            if (idx >= 0) {
+                semua[idx] = { ...kontak, tanggalDiupdate: new Date().toISOString() };
+            } else {
+                semua.push(kontak);
+            }
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(semua));
+            return semua;
+        }
+
+        function hapusKontak(id) {
+            const semua = ambilSemuaKontak();
+            const filtered = semua.filter(k => k.id !== id);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
+            return filtered;
+        }
+
+        function resetDatabase() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(dataAwal));
+            contacts = [...dataAwal];
+            renderAll();
+            navigateTo('dashboard');
+            showToast('Database berhasil direset!', 'success');
+        }
+
+        // ===== STATE =====
+        let contacts = ambilSemuaKontak();
+        let currentPage = 'dashboard';
+        let searchQuery = '';
+        let filterKategori = 'semua';
+        let editingContact = null;
+        let selectedKategori = 'keluarga';
+
+        // ===== NAVIGATION =====
+        function navigateTo(page) {
+            currentPage = page;
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page-' + page).classList.add('active');
+            document.querySelectorAll('.sidebar-nav-item').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.page === page);
+            });
+            // Show/hide FAB
+            const fab = document.getElementById('fab');
+            if (page === 'contacts') {
+                fab.classList.remove('hidden');
+            } else {
+                fab.classList.add('hidden');
+            }
+            closeSidebar();
+            renderAll();
+        }
+
+        // ===== SIDEBAR =====
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('sidebarOverlay').classList.toggle('active');
+        }
+        function closeSidebar() {
+            document.getElementById('sidebar').classList.remove('open');
+            document.getElementById('sidebarOverlay').classList.remove('active');
+        }
+        document.getElementById('sidebarOverlay').addEventListener('click', closeSidebar);
+
+        // ===== MODAL =====
+        function openModal(id) {
+            document.getElementById(id).classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        // Close modal on overlay click
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+        });
+
+        // ===== TOAST =====
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = 'toast ' + type;
+            const icons = { success: '✅', error: '❌', info: 'ℹ️' };
+            toast.innerHTML = icons[type] + ' ' + message;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(100px)';
+                toast.style.transition = 'all 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 2500);
+        }
+
+        // ===== KATEGORI HELPERS =====
+        const kategoriInfo = {
+            keluarga: { label: 'Keluarga', icon: '👨‍👩‍👧‍👦', badge: 'badge-keluarga', bar: 'bar-red' },
+            teman: { label: 'Teman', icon: '🤝', badge: 'badge-teman', bar: 'bar-green' },
+            rekan_kerja: { label: 'Rekan Kerja', icon: '💼', badge: 'badge-rekan_kerja', bar: 'bar-blue' },
+            lainnya: { label: 'Lainnya', icon: '📋', badge: 'badge-lainnya', bar: 'bar-gray' },
+        };
+
+        function getKatInfo(kat) { return kategoriInfo[kat] || kategoriInfo.lainnya; }
+
+        // ===== SEARCH & FILTER =====
+        function handleSearch() {
+            searchQuery = document.getElementById('searchInput').value;
+            const clearBtn = document.getElementById('searchClear');
+            clearBtn.classList.toggle('visible', searchQuery.length > 0);
+            renderContacts();
+        }
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            searchQuery = '';
+            document.getElementById('searchClear').classList.remove('visible');
+            renderContacts();
+        }
+        function setFilter(kat) {
+            filterKategori = kat;
+            document.querySelectorAll('.filter-chip').forEach(chip => {
+                chip.classList.toggle('active', chip.dataset.filter === kat);
+            });
+            renderContacts();
+        }
+
+        function getFilteredContacts() {
+            return contacts.filter(c => {
+                const matchSearch = searchQuery
+                    ? c.nama.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                      c.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                      c.telepon.includes(searchQuery) ||
+                      c.alamat.toLowerCase().includes(searchQuery.toLowerCase())
+                    : true;
+                const matchFilter = filterKategori === 'semua' ? true : c.kategori === filterKategori;
+                return matchSearch && matchFilter;
+            });
+        }
+
+        // ===== RENDER DASHBOARD =====
+        function renderDashboard() {
+            const total = contacts.length;
+            const katCount = {};
+            contacts.forEach(c => { katCount[c.kategori] = (katCount[c.kategori] || 0) + 1; });
+
+            const stats = [
+                { label: 'Total Kontak', value: total, icon: '👥', cls: 'stat-blue' },
+                { label: 'Keluarga', value: katCount.keluarga || 0, icon: '👨‍👩‍👧‍👦', cls: 'stat-red' },
+                { label: 'Teman', value: katCount.teman || 0, icon: '🤝', cls: 'stat-green' },
+                { label: 'Rekan Kerja', value: katCount.rekan_kerja || 0, icon: '💼', cls: 'stat-purple' },
+            ];
+
+            let html = '<div class="stats-grid">';
+            stats.forEach(s => {
+                html += `<div class="stat-card ${s.cls} slide-up">
+                    <div class="stat-icon">${s.icon}</div>
+                    <div class="stat-value">${s.value}</div>
+                    <div class="stat-label">${s.label}</div>
+                </div>`;
+            });
+            html += '</div>';
+
+            // Chart
+            html += '<div class="chart-card slide-up"><div class="chart-title">📊 Distribusi Kategori</div>';
+            Object.entries(katCount).forEach(([kat, count]) => {
+                const info = getKatInfo(kat);
+                const pct = total > 0 ? Math.round((count / total) * 100) : 0;
+                html += `<div class="chart-bar-row">
+                    <span class="chart-bar-icon">${info.icon}</span>
+                    <span class="chart-bar-label">${info.label}</span>
+                    <div class="chart-bar-track"><div class="chart-bar-fill ${info.bar}" style="width:${pct}%"></div></div>
+                    <span class="chart-bar-count">${count} (${pct}%)</span>
+                </div>`;
+            });
+            html += '</div>';
+
+            // Recent
+            const recent = [...contacts].sort((a, b) => new Date(b.tanggalDiupdate) - new Date(a.tanggalDiupdate)).slice(0, 3);
+            if (recent.length > 0) {
+                html += '<div class="chart-card slide-up"><div class="chart-title">🕐 Terakhir Diupdate</div>';
+                recent.forEach(c => {
+                    const date = new Date(c.tanggalDiupdate).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+                    html += `<div class="recent-item" onclick="viewContact('${c.id}')">
+                        <div class="recent-avatar">${c.nama.charAt(0).toUpperCase()}</div>
+                        <div class="recent-info">
+                            <div class="recent-name">${c.nama}</div>
+                            <div class="recent-email">${c.email}</div>
+                        </div>
+                        <div class="recent-date">${date}</div>
+                    </div>`;
+                });
+                html += '</div>';
+            }
+
+            document.getElementById('dashboardContent').innerHTML = html;
+        }
+
+        // ===== RENDER CONTACTS =====
+        function renderContacts() {
+            const filtered = getFilteredContacts();
+            document.getElementById('contactCount').textContent = contacts.length + ' kontak tersimpan';
+
+            if (filtered.length === 0) {
+                const msg = searchQuery
+                    ? `Tidak ada kontak yang cocok dengan "${searchQuery}"`
+                    : 'Belum ada kontak. Tambahkan kontak baru!';
+                const icon = searchQuery ? '🔍' : '📭';
+                document.getElementById('contactsList').innerHTML = `
+                    <div class="empty-state fade-in">
+                        <div class="empty-state-icon">${icon}</div>
+                        <h3>${searchQuery ? 'Tidak Ditemukan' : 'Belum Ada Kontak'}</h3>
+                        <p>${msg}</p>
+                    </div>`;
+                return;
+            }
+
+            let html = `<p class="contact-count">Menampilkan ${filtered.length} kontak</p>`;
+            html += '<div class="contacts-grid">';
+            filtered.forEach((c, i) => {
+                const info = getKatInfo(c.kategori);
+                html += `<div class="contact-card slide-up" style="animation-delay:${i * 0.05}s" onclick="viewContact('${c.id}')">
+                    <div class="contact-card-top">
+                        <div class="contact-avatar">${c.nama.charAt(0).toUpperCase()}</div>
+                        <div class="contact-info">
+                            <div class="contact-name-row">
+                                <span class="contact-name">${c.nama}</span>
+                                <span class="contact-badge ${info.badge}">${info.icon} ${info.label}</span>
+                            </div>
+                            <div class="contact-detail"><span class="detail-icon">📧</span><span class="detail-text">${c.email}</span></div>
+                            <div class="contact-detail"><span class="detail-icon">📱</span><span class="detail-text">${c.telepon}</span></div>
+                            <div class="contact-detail"><span class="detail-icon">📍</span><span class="detail-text">${c.alamat}</span></div>
+                        </div>
+                        <div class="contact-actions" onclick="event.stopPropagation()">
+                            <button class="contact-action-btn edit" onclick="editContact('${c.id}')" title="Edit">✏️</button>
+                            <button class="contact-action-btn delete" onclick="confirmDelete('${c.id}')" title="Hapus">🗑️</button>
+                        </div>
+                    </div>
+                </div>`;
+            });
+            html += '</div>';
+            document.getElementById('contactsList').innerHTML = html;
+        }
+
+        // ===== RENDER ALL =====
+        function renderAll() {
+            contacts = ambilSemuaKontak();
+            renderDashboard();
+            renderContacts();
+        }
+
+        // ===== VIEW CONTACT =====
+        function viewContact(id) {
+            const c = contacts.find(k => k.id === id);
+            if (!c) return;
+            const info = getKatInfo(c.kategori);
+            const date = new Date(c.tanggalDibuat).toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+            document.getElementById('detailContent').innerHTML = `
+                <div class="detail-avatar-section">
+                    <div class="detail-avatar">${c.nama.charAt(0).toUpperCase()}</div>
+                    <div class="detail-name">${c.nama}</div>
+                    <span class="detail-badge ${info.badge}">${info.icon} ${info.label}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-row-icon">📧</span>
+                    <div><div class="detail-row-label">Email</div><div class="detail-row-value"><a href="mailto:${c.email}">${c.email}</a></div></div>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-row-icon">📱</span>
+                    <div><div class="detail-row-label">Telepon</div><div class="detail-row-value"><a href="tel:${c.telepon}">${c.telepon}</a></div></div>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-row-icon">📍</span>
+                    <div><div class="detail-row-label">Alamat</div><div class="detail-row-value">${c.alamat}</div></div>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-row-icon">📅</span>
+                    <div><div class="detail-row-label">Dibuat</div><div class="detail-row-value">${date}</div></div>
+                </div>
+                <div class="detail-actions">
+                    <button class="btn-primary" onclick="closeModal('detailModal');editContact('${c.id}')">✏️ Edit</button>
+                    <button class="btn-danger" onclick="closeModal('detailModal');confirmDelete('${c.id}')">🗑️ Hapus</button>
+                </div>`;
+            openModal('detailModal');
+        }
+
+        // ===== FORM =====
+        function openAddForm() {
+            editingContact = null;
+            selectedKategori = 'keluarga';
+            document.getElementById('formModalTitle').textContent = '➕ Tambah Kontak Baru';
+            document.getElementById('formSubmitBtn').textContent = '➕ Tambah Kontak';
+            document.getElementById('formNama').value = '';
+            document.getElementById('formEmail').value = '';
+            document.getElementById('formTelepon').value = '';
+            document.getElementById('formAlamat').value = '';
+            document.querySelectorAll('.kategori-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.kat === 'keluarga');
+            });
+            clearFormErrors();
+            openModal('formModal');
+        }
+
+        function editContact(id) {
+            const c = contacts.find(k => k.id === id);
+            if (!c) return;
+            editingContact = c;
+            selectedKategori = c.kategori;
+            document.getElementById('formModalTitle').textContent = '✏️ Edit Kontak';
+            document.getElementById('formSubmitBtn').textContent = '💾 Simpan Perubahan';
+            document.getElementById('formNama').value = c.nama;
+            document.getElementById('formEmail').value = c.email;
+            document.getElementById('formTelepon').value = c.telepon;
+            document.getElementById('formAlamat').value = c.alamat;
+            document.querySelectorAll('.kategori-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.kat === c.kategori);
+            });
+            clearFormErrors();
+            openModal('formModal');
+        }
+
+        function selectKategori(btn) {
+            selectedKategori = btn.dataset.kat;
+            document.querySelectorAll('.kategori-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
+
+        function clearFormErrors() {
+            document.querySelectorAll('.form-error').forEach(e => e.classList.remove('visible'));
+            document.querySelectorAll('.form-input').forEach(i => i.classList.remove('error'));
+        }
+
+        function showFieldError(fieldId, errorId, message) {
+            document.getElementById(fieldId).classList.add('error');
+            const errEl = document.getElementById(errorId);
+            errEl.textContent = message;
+            errEl.classList.add('visible');
+        }
+
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            clearFormErrors();
+            let valid = true;
+
+            const nama = document.getElementById('formNama').value.trim();
+            const email = document.getElementById('formEmail').value.trim();
+            const telepon = document.getElementById('formTelepon').value.trim();
+            const alamat = document.getElementById('formAlamat').value.trim();
+
+            if (!nama) { showFieldError('formNama', 'errorNama', 'Nama wajib diisi'); valid = false; }
+            if (!email) { showFieldError('formEmail', 'errorEmail', 'Email wajib diisi'); valid = false; }
+            else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showFieldError('formEmail', 'errorEmail', 'Format email tidak valid'); valid = false; }
+            if (!telepon) { showFieldError('formTelepon', 'errorTelepon', 'Nomor telepon wajib diisi'); valid = false; }
+            if (!alamat) { showFieldError('formAlamat', 'errorAlamat', 'Alamat wajib diisi'); valid = false; }
+
+            if (!valid) return;
+
+            const now = new Date().toISOString();
+            const kontak = {
+                id: editingContact ? editingContact.id : Date.now().toString(36) + Math.random().toString(36).substr(2),
+                nama, email, telepon, alamat,
+                kategori: selectedKategori,
+                tanggalDibuat: editingContact ? editingContact.tanggalDibuat : now,
+                tanggalDiupdate: now,
+            };
+
+            contacts = simpanKontak(kontak);
+            closeModal('formModal');
+            renderAll();
+            showToast(editingContact ? 'Kontak berhasil diupdate!' : 'Kontak baru berhasil ditambahkan!', 'success');
+        }
+
+        // ===== DELETE =====
+        function confirmDelete(id) {
+            const c = contacts.find(k => k.id === id);
+            if (!c) return;
+            document.getElementById('deleteContent').innerHTML = `
+                <div class="delete-confirm-icon">🗑️</div>
+                <p>Apakah Anda yakin ingin menghapus kontak</p>
+                <p class="name">"${c.nama}"?</p>
+                <p class="warning">Tindakan ini tidak dapat dibatalkan.</p>
+                <div class="delete-actions">
+                    <button class="btn-secondary" onclick="closeModal('deleteModal')">Batal</button>
+                    <button class="btn-danger" onclick="executeDelete('${c.id}')">Ya, Hapus</button>
+                </div>`;
+            openModal('deleteModal');
+        }
+
+        function executeDelete(id) {
+            contacts = hapusKontak(id);
+            closeModal('deleteModal');
+            renderAll();
+            showToast('Kontak berhasil dihapus!', 'success');
+        }
+
+        // ===== KEYBOARD SHORTCUTS =====
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal-overlay.active').forEach(m => {
+                    m.classList.remove('active');
+                });
+                document.body.style.overflow = '';
+            }
+        });
+
+        // ===== INIT =====
+        renderAll();
+    </script>
+</body>
 </html>
