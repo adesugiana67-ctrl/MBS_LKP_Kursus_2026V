@@ -1,12 +1,12 @@
 // Data Awal Default (6 Sampel Sekolah) jika LocalStorage kosong
 const defaultData = {
     akreditasi: [
-        { npsn: "P2963449", nama: "LKP Family English Course (FEC)", alamat: "Jl. Raya Jatinangor No. 297", pimpinan: "Dra. SEKARWATI", nilai: "Belum", tahun: "0", masa: "0", sk: "-" },
-        { npsn: "P9934728", nama: "LKP GANESHA PRATAMA", alamat: "Jl. P. Santri No. 78", pimpinan: "M. ARWAN AZIZ, ST", nilai: "B", tahun: "2019", masa: "2024", sk: "153/BAN PAUD/2019" },
-        { npsn: "P5512349", nama: "LKP SUMEDANG KOMPUTER", alamat: "Jl. Prabu Geusan Ulun No. 12", pimpinan: "H. DEDI SUPRIADI", nilai: "A", tahun: "2021", masa: "2026", sk: "421/BAN-PNF/2021" },
-        { npsn: "P7788912", nama: "LKP KARYA MANDIRI BUSANA", alamat: "Jl. Corenda No. 45", pimpinan: "NINA KARLINA, S.Pd", nilai: "B", tahun: "2022", masa: "2027", sk: "882/BAN-PNF/2022" },
-        { npsn: "P1122334", nama: "LKP YANI 43 SUMEDANG", alamat: "Jl. Pendopo No. 17 Talun", pimpinan: "YANI SURYANI", nilai: "Belum", tahun: "0", masa: "0", sk: "-" },
-        { npsn: "P6655443", nama: "LKP BINTANG BAHASA NOESANTARA", alamat: "Jl. Geusan Ulun No. 104", pimpinan: "RUDI HERMAWAN", nilai: "B", tahun: "2023", masa: "2028", sk: "1042/BAN/2023" }
+        { npsn: "K5659720", nama: "LKP Family English Course (FEC)", alamat: "Jl. Raya Jatinangor No. 297 Desa Hegarmanah", pimpinan: "Dra. SEKARWATI", nilai: "Belum", tahun: "0", masa: "0", sk: "-" },
+        { npsn: "K5659720", nama: "LKP GANESHA PRATAMA", alamat: "Jalan P. Santri No. 78 Kel. Kota kulon", pimpinan: "M. ARWAN AZIZ, ST", nilai: "B", tahun: "2019", masa: "2024", sk: "153/BAN PAUD/2019" },
+        { npsn: "K5659729", nama: "LKP Komputer Dan Manajemen Actual ( LPKMA )", alamat: "Jl. P. Geusan Ulun No. 123 Kel. Regol Wetan", pimpinan: "Hj. ETI RUSMATATY", nilai: "B", tahun: "2015", masa: "2020", sk: "038/K.1/SK/AKR/2015" },
+        { npsn: "K5659731", nama: "LKP Puji Lestari", alamat: "Jl. P Geusan Ulun No. 50 B RT 04 / RW 05 Kel. Regolwetan", pimpinan: "__", nilai: "C", tahun: "0", masa: "0", sk: "- (Bukan Program Kesetaraan" },
+        { npsn: "K5659740", nama: "LKP YANI 43 SUMEDANG", alamat: "Jl. Pendopo No. 17 Talun", pimpinan: "KHALID INSAN TAUHID", nilai: "C", tahun: "2014", masa: "2019", sk: "- (Bukan Program Kesetaraan)" },
+        { npsn: "K5659762", nama: "LKP Prestatif", alamat: "Jl. Raya Cibeureum Wetan No. 422 Rt.01/05", pimpinan: "ATI ROHAETI, M.Pd", nilai: "B", tahun: "2016", masa: "2021", sk: "- (Bukan Program Kesetaraan)" }
     ],
     operasional: [
         { npsn: "K5659720", nama: "LKP Family English Course (FEC)", alamat: "Jl. Raya Jatinangor No. 297", pimpinan: "Dra. SEKARWATI", terbit: "0", habis: "0", sk: "-" },
