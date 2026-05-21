@@ -35,8 +35,9 @@
 
     <main class="max-w-7xl mx-auto px-4 py-6">
         
-        <header id="main-header" class="bg-white mx-6 mt-6 p-6 rounded-xl border border-gray-200 shadow-sm flex flex-col items-center text-center">
-        <div class="w-36 h-36 -center justify-center-logo"><img src="logo.png" alt="Logo Kabupaten Sumedang"></div>
+        <div class="bg-white rounded-lg p-6 shadow-sm border border-gray-200 text-center mb-6 printable-header">
+            <div class="mx-auto w-14 h-14 bg-amber-500 text-slate-900 font-extrabold rounded-full mb-3 flex items-center justify-center text-xs border shadow-inner non-printable">
+                LOGO
             </div>
             <h2 class="text-md font-bold text-blue-950 tracking-wide uppercase">Dinas Pendidikan Kabupaten Sumedang</h2>
             <h3 class="text-xs font-bold text-gray-700 mt-1 uppercase tracking-wider leading-relaxed">
@@ -44,19 +45,19 @@
                 Penyelenggaraan Pendidikan Lembaga Kursus Non Formal Tahun 2026
             </h3>
             <div class="w-32 h-0.5 bg-amber-500 mx-auto my-2"></div>
-            <p class="text-[10px] text-gray-500 italic uppercase font-semibold">"Manajemen Berbasis MBS Dan Pengelolaan Sistem Informasi (Digitalisasi)"</p>
+            <p class="text-[10px] text-gray-500 italic uppercase font-semibold">"Manajemen Berbasis Sekolah (MBS) Dan Pengelolaan Sistem Informasi (Digitalisasi)"</p>
         </div>
 
         <section id="content-beranda" class="tab-content active space-y-6">
             <div class="flex justify-between items-center non-printable">
                 <h4 class="text-xs font-bold text-slate-700 tracking-wider uppercase"><i class="fa-solid fa-chart-pie mr-2 text-blue-600"></i>Konsolidasi Hasil Laporan Dashboard</h4>
-                <button onclick="window.print()" class="bg-slate-800 text-white px-3 py-1.5 rounded shadow hover:bg-slate-900 text-[11px] cursor-pointer"><i class="fa fa-print mr-1"></i> Cetak Halaman Ini</button>
+                <button onclick="window.print()" class="bg-slate-800 text-white px-3 py-1.5 rounded shadow hover:bg-slate-900 text-[11px]"><i class="fa fa-print mr-1"></i> Cetak Halaman Ini</button>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                 <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
                     <div class="bg-blue-600 text-white p-3 text-[11px] font-bold flex justify-between items-center uppercase"><span>Status Akreditasi</span><i class="fa fa-graduation-cap"></i></div>
-                    <div class="p-4"><span class="text-[10px] text-gray-400 block uppercase font-bold">Terakreditasi (A/B/C)</span><span id="stat-akreditasi" class="text-3xl font-black text-slate-800">0</span></div>
+                    <div class="p-4"><span class="text-[10px] text-gray-400 block uppercase font-bold">Terakreditasi (A/B)</span><span id="stat-akreditasi" class="text-3xl font-black text-slate-800">0</span></div>
                 </div>
                 <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
                     <div class="bg-amber-500 text-white p-3 text-[11px] font-bold flex justify-between items-center uppercase"><span>Ijin Operasional</span><i class="fa fa-id-card"></i></div>
@@ -91,8 +92,8 @@
             <div class="flex justify-between items-center non-printable">
                 <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider">Laporan Akreditasi Lembaga</h4>
                 <div class="space-x-1 text-xs">
-                    <button onclick="window.print()" class="bg-slate-700 text-white px-2.5 py-1.5 rounded cursor-pointer"><i class="fa fa-print"></i> Cetak</button>
-                    <button onclick="openModal('akreditasi')" class="bg-blue-600 text-white px-2.5 py-1.5 rounded font-bold cursor-pointer"><i class="fa fa-plus"></i> Tambah Data</button>
+                    <button onclick="window.print()" class="bg-slate-700 text-white px-2.5 py-1.5 rounded"><i class="fa fa-print"></i> Cetak</button>
+                    <button onclick="openModal('akreditasi')" class="bg-blue-600 text-white px-2.5 py-1.5 rounded font-bold"><i class="fa fa-plus"></i> Tambah Data</button>
                 </div>
             </div>
             <div class="overflow-x-auto bg-white rounded-lg shadow border border-gray-200">
@@ -120,8 +121,8 @@
             <div class="flex justify-between items-center non-printable">
                 <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider">Validitas Ijin Operasional</h4>
                 <div class="space-x-1 text-xs">
-                    <button onclick="window.print()" class="bg-slate-700 text-white px-2.5 py-1.5 rounded cursor-pointer"><i class="fa fa-print"></i> Cetak</button>
-                    <button onclick="openModal('operasional')" class="bg-amber-500 text-white px-2.5 py-1.5 rounded font-bold cursor-pointer"><i class="fa fa-plus"></i> Tambah Data</button>
+                    <button onclick="window.print()" class="bg-slate-700 text-white px-2.5 py-1.5 rounded"><i class="fa fa-print"></i> Cetak</button>
+                    <button onclick="openModal('operasional')" class="bg-amber-500 text-white px-2.5 py-1.5 rounded font-bold"><i class="fa fa-plus"></i> Tambah Data</button>
                 </div>
             </div>
             <div class="overflow-x-auto bg-white rounded-lg shadow border border-gray-200">
@@ -148,8 +149,8 @@
             <div class="flex justify-between items-center non-printable">
                 <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider">Rekapitulasi Data Peserta Didik</h4>
                 <div class="space-x-1 text-xs">
-                    <button onclick="window.print()" class="bg-slate-700 text-white px-2.5 py-1.5 rounded cursor-pointer"><i class="fa fa-print"></i> Cetak</button>
-                    <button onclick="openModal('peserta')" class="bg-emerald-600 text-white px-2.5 py-1.5 rounded font-bold cursor-pointer"><i class="fa fa-plus"></i> Tambah Data</button>
+                    <button onclick="window.print()" class="bg-slate-700 text-white px-2.5 py-1.5 rounded"><i class="fa fa-print"></i> Cetak</button>
+                    <button onclick="openModal('peserta')" class="bg-emerald-600 text-white px-2.5 py-1.5 rounded font-bold"><i class="fa fa-plus"></i> Tambah Data</button>
                 </div>
             </div>
             <div class="overflow-x-auto bg-white rounded-lg shadow border border-gray-200">
@@ -181,8 +182,8 @@
             <div class="flex justify-between items-center non-printable">
                 <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider">Keterisian Jenjang KKNI (%)</h4>
                 <div class="space-x-1 text-xs">
-                    <button onclick="window.print()" class="bg-slate-700 text-white px-2.5 py-1.5 rounded cursor-pointer"><i class="fa fa-print"></i> Cetak</button>
-                    <button onclick="openModal('program')" class="bg-rose-600 text-white px-2.5 py-1.5 rounded font-bold cursor-pointer"><i class="fa fa-plus"></i> Tambah Data</button>
+                    <button onclick="window.print()" class="bg-slate-700 text-white px-2.5 py-1.5 rounded"><i class="fa fa-print"></i> Cetak</button>
+                    <button onclick="openModal('program')" class="bg-rose-600 text-white px-2.5 py-1.5 rounded font-bold"><i class="fa fa-plus"></i> Tambah Data</button>
                 </div>
             </div>
             <div class="overflow-x-auto bg-white rounded-lg shadow border border-gray-200">
@@ -198,9 +199,9 @@
                             <th class="p-3 non-printable" rowspan="2">Aksi</th>
                         </tr>
                         <tr class="bg-slate-700 text-white font-bold text-[10px]">
-                            <th class="p-2 border-l border-slate-600 text-center">L1</th><th class="p-2 text-center">L2</th><th class="p-2 text-center">L3</th>
-                            <th class="p-2 text-center">L4</th><th class="p-2 text-center">L5</th><th class="p-2 text-center">L6</th>
-                            <th class="p-2 text-center">L7</th><th class="p-2 text-center">L8</th><th class="p-2 text-center">L9</th>
+                            <th class="p-2 border-l border-slate-600 text-center">Level 1</th><th class="p-2 text-center">Level 2</th><th class="p-2 text-center">Level 3</th>
+                            <th class="p-2 text-center">Level 4</th><th class="p-2 text-center">Level 5</th><th class="p-2 text-center">Level 6</th>
+                            <th class="p-2 text-center">Level 7</th><th class="p-2 text-center">Level 8</th><th class="p-2 text-center">Level 9</th>
                         </tr>
                     </thead>
                     <tbody></tbody>
@@ -214,7 +215,7 @@
         <div class="bg-white rounded-lg shadow-xl max-w-lg w-full p-6 mx-4 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center border-b pb-3 mb-4">
                 <h3 class="text-sm font-bold text-slate-800 uppercase" id="modalTitle">Form Input Data</h3>
-                <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600 font-bold text-lg cursor-pointer">&times;</button>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600 font-bold text-lg">&times;</button>
             </div>
             <form id="modalForm" onsubmit="saveFormData(event)" class="space-y-3 text-xs">
                 <input type="hidden" id="form-type">
@@ -222,8 +223,8 @@
                 <div id="dynamic-fields" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     </div>
                 <div class="flex justify-end space-x-2 border-t pt-3 mt-4">
-                    <button type="button" onclick="closeModal()" class="bg-gray-200 text-gray-700 px-3 py-2 rounded cursor-pointer">Batal</button>
-                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded font-bold cursor-pointer">Simpan Data</button>
+                    <button type="button" onclick="closeModal()" class="bg-gray-200 text-gray-700 px-3 py-2 rounded">Batal</button>
+                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded font-bold">Simpan Data</button>
                 </div>
             </form>
         </div>
