@@ -50,10 +50,6 @@
             </div>
             
             <div class="flex flex-wrap items-center gap-2 w-full lg:w-auto justify-end">
-                <label class="bg-gray-700 hover:bg-gray-800 text-white px-3 py-2 rounded-lg text-xs font-bold shadow transition flex items-center gap-1.5 cursor-pointer">
-                    <i class="fa-solid fa-upload"></i> Impor Backup (JSON)
-                    <input type="file" id="importFile" accept=".json" onchange="importData(event)" class="hidden">
-                </label>
                 <button onclick="toggleForm()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-bold shadow transition flex items-center gap-2 cursor-pointer">
                     <i class="fa-solid fa-plus"></i> Tambah / Kelola Data
                 </button>
@@ -65,11 +61,12 @@
 
         <section id="form-container" class="hidden mb-8 bg-white p-6 rounded-xl shadow-md border border-gray-200">
             <div class="flex justify-between items-center border-b border-gray-200 pb-3 mb-4">
-                <h3 class="text-lg font-bold text-gray-800"><i class="fa-solid fa-database text-green-600 mr-2"></i>Formulir Input Data</h3>
+                <h3 id="form-title" class="text-lg font-bold text-gray-800"><i class="fa-solid fa-database text-green-600 mr-2"></i>Formulir Input Data</h3>
                 <button onclick="toggleForm()" class="text-gray-400 hover:text-gray-600 cursor-pointer"><i class="fa-solid fa-xmark text-xl"></i></button>
             </div>
             
             <form id="lkpForm" onsubmit="saveData(event)" class="space-y-6">
+                <input type="hidden" id="edit-id">
                 <div>
                     <label class="block text-sm font-bold text-gray-700 mb-2">Pilih Kategori Penyimpanan Data:</label>
                     <select id="form-kategori" onchange="adaptFormFields()" class="w-full p-2.5 border border-gray-300 rounded-lg bg-gray-50">
@@ -86,7 +83,10 @@
                     <button type="button" onclick="clearAllDataStorage()" class="bg-red-100 text-red-700 hover:bg-red-200 px-4 py-2 rounded-lg text-sm font-semibold cursor-pointer">
                         Kosongkan Semua Data
                     </button>
-                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-sm font-bold shadow cursor-pointer">
+                    <button type="button" id="btn-batal-edit" onclick="cancelEdit()" class="hidden bg-gray-200 text-gray-700 hover:bg-gray-300 px-4 py-2 rounded-lg text-sm font-semibold cursor-pointer">
+                        Batal
+                    </button>
+                    <button type="submit" id="btn-submit-form" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-sm font-bold shadow cursor-pointer">
                         Simpan ke Storage
                     </button>
                 </div>
@@ -100,7 +100,11 @@
                         <h2 class="text-xl font-bold text-gray-800"><i class="fa-solid fa-id-card text-blue-600 mr-2"></i>Status, Akreditasi, & Izin Operasional LKP</h2>
                         <span class="bg-blue-50 text-blue-700 text-[11px] font-bold px-2 py-0.5 rounded-full border border-blue-200">Kategori 1</span>
                     </div>
-                    <div class="btn-aksi-cetak flex gap-2">
+                    <div class="btn-aksi-cetak flex flex-wrap gap-2">
+                        <label class="bg-gray-700 hover:bg-gray-800 text-white px-3 py-2 rounded-lg text-xs font-bold shadow transition flex items-center gap-1.5 cursor-pointer">
+                            <i class="fa-solid fa-upload"></i> Unggah Data (.json)
+                            <input type="file" accept=".json" onchange="importSingleCategory(event, 'lkp_status_db')" class="hidden">
+                        </label>
                         <button onclick="window.print()" class="bg-blue-50 hover:bg-blue-100 text-blue-700 px-3 py-2 rounded-lg text-xs font-bold transition flex items-center gap-1.5 border border-blue-200 cursor-pointer">
                             <i class="fa-solid fa-print"></i> Cetak Halaman
                         </button>
@@ -118,6 +122,7 @@
                                 <th class="px-4 py-3">Alamat</th>
                                 <th class="px-4 py-3">Pimpinan</th>
                                 <th class="px-4 py-3 text-center">Akreditasi</th>
+                                <th class="px-4 py-3">No. SK Akreditasi</th>
                                 <th class="px-4 py-3">Masa Berlaku Akr.</th>
                                 <th class="px-4 py-3">Izin Operasional</th>
                                 <th class="px-4 py-3">Masa Berlaku Izin</th>
@@ -137,7 +142,11 @@
                         <h2 class="text-xl font-bold text-gray-800"><i class="fa-solid fa-list-check text-indigo-600 mr-2"></i>Program Layanan Kursus yang Disediakan</h2>
                         <span class="bg-indigo-50 text-indigo-700 text-[11px] font-bold px-2 py-0.5 rounded-full border border-indigo-200">Kategori 2</span>
                     </div>
-                    <div class="btn-aksi-cetak flex gap-2">
+                    <div class="btn-aksi-cetak flex flex-wrap gap-2">
+                        <label class="bg-gray-700 hover:bg-gray-800 text-white px-3 py-2 rounded-lg text-xs font-bold shadow transition flex items-center gap-1.5 cursor-pointer">
+                            <i class="fa-solid fa-upload"></i> Unggah Data (.json)
+                            <input type="file" accept=".json" onchange="importSingleCategory(event, 'lkp_layanan_db')" class="hidden">
+                        </label>
                         <button onclick="window.print()" class="bg-blue-50 hover:bg-blue-100 text-blue-700 px-3 py-2 rounded-lg text-xs font-bold transition flex items-center gap-1.5 border border-blue-200 cursor-pointer">
                             <i class="fa-solid fa-print"></i> Cetak Halaman
                         </button>
@@ -157,7 +166,11 @@
                         <h2 class="text-xl font-bold text-gray-800"><i class="fa-solid fa-layer-group text-purple-600 mr-2"></i>Kerangka Kualifikasi Nasional Indonesia (KKNI)</h2>
                         <p class="text-xs text-gray-500 mt-1">Pemetaan kesetaraan jenjang kompetensi lulusan LKP.</p>
                     </div>
-                    <div class="btn-aksi-cetak flex gap-2">
+                    <div class="btn-aksi-cetak flex flex-wrap gap-2">
+                        <label class="bg-gray-700 hover:bg-gray-800 text-white px-3 py-2 rounded-lg text-xs font-bold shadow transition flex items-center gap-1.5 cursor-pointer">
+                            <i class="fa-solid fa-upload"></i> Unggah Data (.json)
+                            <input type="file" accept=".json" onchange="importSingleCategory(event, 'lkp_kkni_db')" class="hidden">
+                        </label>
                         <button onclick="window.print()" class="bg-blue-50 hover:bg-blue-100 text-blue-700 px-3 py-2 rounded-lg text-xs font-bold transition flex items-center gap-1.5 border border-blue-200 cursor-pointer">
                             <i class="fa-solid fa-print"></i> Cetak Halaman
                         </button>
@@ -177,7 +190,11 @@
                         <h2 class="text-xl font-bold text-gray-800"><i class="fa-solid fa-hand-holding-dollar text-emerald-600 mr-2"></i>Program Pelatihan Yang Didapat Lembaga (Bantuan Pemerintah)</h2>
                         <span class="bg-emerald-50 text-emerald-700 text-[11px] font-bold px-2 py-0.5 rounded-full border border-emerald-200">Kategori 4</span>
                     </div>
-                    <div class="btn-aksi-cetak flex gap-2">
+                    <div class="btn-aksi-cetak flex flex-wrap gap-2">
+                        <label class="bg-gray-700 hover:bg-gray-800 text-white px-3 py-2 rounded-lg text-xs font-bold shadow transition flex items-center gap-1.5 cursor-pointer">
+                            <i class="fa-solid fa-upload"></i> Unggah Data (.json)
+                            <input type="file" accept=".json" onchange="importSingleCategory(event, 'lkp_bantuan_db')" class="hidden">
+                        </label>
                         <button onclick="window.print()" class="bg-blue-50 hover:bg-blue-100 text-blue-700 px-3 py-2 rounded-lg text-xs font-bold transition flex items-center gap-1.5 border border-blue-200 cursor-pointer">
                             <i class="fa-solid fa-print"></i> Cetak Halaman
                         </button>
@@ -214,9 +231,9 @@
     </footer>
 
     <script>
-        // Data Dummy Tersemat Otomatis (Termasuk Kategori Baru)
+        // Data Dummy Tersemat Otomatis
         const initialStatus = [
-            { id: "1", npsn: "K5651234", nama: "LKP Sumedang Komputer", alamat: "Jl. Prabu Geusan Ulun No. 45, Sumedang", pimpinan: "Drs. Cecep Hidayat", akreditasi: "A", akhirAkr: "2028", izinOp: "421.9/123/2024", akhirIzin: "2029" }
+            { id: "1", npsn: "K5651234", nama: "LKP Sumedang Komputer", alamat: "Jl. Prabu Geusan Ulun No. 45, Sumedang", pimpinan: "Drs. Cecep Hidayat", akreditasi: "A", noSkAkr: "123/BAN-PDM/SK/2024", akhirAkr: "2028", izinOp: "421.9/123/2024", akhirIzin: "2029" }
         ];
         const initialLayanan = [
             { id: "1", npsn: "K5651234", nama: "LKP Sumedang Komputer", layanan: "Aplikasi Perkantoran, Desain Grafis Komputer, Pemrograman Web Dasar" }
@@ -243,7 +260,7 @@
             // Render Tab 1
             const statusData = getDB('lkp_status_db');
             const tableBody = document.getElementById('table-status-body');
-            tableBody.innerHTML = statusData.length === 0 ? `<tr><td colspan="9" class="text-center py-6 text-gray-400">Tidak ada data. Klik tombol 'Tambah Data'.</td></tr>` : '';
+            tableBody.innerHTML = statusData.length === 0 ? `<tr><td colspan="10" class="text-center py-6 text-gray-400">Tidak ada data. Klik tombol 'Tambah Data'.</td></tr>` : '';
             statusData.forEach(d => {
                 tableBody.innerHTML += `
                     <tr class="hover:bg-gray-50 transition text-xs">
@@ -252,11 +269,13 @@
                         <td class="px-4 py-4">${d.alamat}</td>
                         <td class="px-4 py-4 font-medium">${d.pimpinan}</td>
                         <td class="px-4 py-4 text-center"><span class="bg-blue-100 text-blue-800 font-bold px-2 py-0.5 rounded">${d.akreditasi}</span></td>
+                        <td class="px-4 py-4 font-mono text-gray-500">${d.noSkAkr || '-'}</td>
                         <td class="px-4 py-4">${d.akhirAkr}</td>
                         <td class="px-4 py-4 font-mono">${d.izinOp}</td>
                         <td class="px-4 py-4 text-green-700 font-medium">${d.akhirIzin}</td>
-                        <td class="px-4 py-4 text-center aksi-kolom">
-                            <button onclick="deleteItem('lkp_status_db', '${d.id}')" class="text-red-500 hover:text-red-700 cursor-pointer"><i class="fa-solid fa-trash"></i></button>
+                        <td class="px-4 py-4 text-center aksi-kolom flex justify-center gap-2 mt-2 border-none">
+                            <button onclick="editItem('status', '${d.id}')" class="text-blue-500 hover:text-blue-700 cursor-pointer" title="Edit"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <button onclick="deleteItem('lkp_status_db', '${d.id}')" class="text-red-500 hover:text-red-700 cursor-pointer" title="Hapus"><i class="fa-solid fa-trash"></i></button>
                         </td>
                     </tr>`;
             });
@@ -274,7 +293,8 @@
                             <h3 class="font-bold text-base text-indigo-950">${l.nama}</h3>
                         </div>
                         <ul class="space-y-1.5 text-sm text-gray-700">${listItems}</ul>
-                        <div class="mt-4 pt-2 border-t border-gray-100 text-right aksi-kolom">
+                        <div class="mt-4 pt-2 border-t border-gray-100 text-right aksi-kolom space-x-3">
+                            <button onclick="editItem('layanan', '${l.id}')" class="text-xs text-blue-500 hover:text-blue-700 cursor-pointer"><i class="fa-solid fa-pen-to-square mr-1"></i>Edit</button>
                             <button onclick="deleteItem('lkp_layanan_db', '${l.id}')" class="text-xs text-red-500 hover:text-red-700 cursor-pointer"><i class="fa-solid fa-trash mr-1"></i>Hapus</button>
                         </div>
                     </div>`;
@@ -298,7 +318,10 @@
                             <span class="text-xs text-gray-400 block font-bold">${k.program}</span>
                             <span class="text-sm font-bold text-purple-700">${k.level}</span>
                             <p class="text-[11px] text-gray-500 mt-0.5">${k.ket}</p>
-                            <button onclick="deleteItem('lkp_kkni_db', '${k.id}')" class="absolute top-2 right-2 text-red-400 hover:text-red-600 text-xs opacity-0 group-hover:opacity-100 transition cursor-pointer aksi-kolom"><i class="fa-solid fa-trash"></i></button>
+                            <div class="absolute top-2 right-2 flex gap-1.5 opacity-0 group-hover:opacity-100 transition aksi-kolom">
+                                <button onclick="editItem('kkni', '${k.id}')" class="text-blue-400 hover:text-blue-600 text-xs cursor-pointer"><i class="fa-solid fa-pen-to-square"></i></button>
+                                <button onclick="deleteItem('lkp_kkni_db', '${k.id}')" class="text-red-400 hover:text-red-600 text-xs cursor-pointer"><i class="fa-solid fa-trash"></i></button>
+                            </div>
                         </div>`;
                 });
                 kkniContainer.innerHTML += `
@@ -308,7 +331,7 @@
                     </div>`;
             }
 
-            // Render Tab 4 (Baru - Bantuan Pemerintah)
+            // Render Tab 4
             const bantuanData = getDB('lkp_bantuan_db');
             const bantuanBody = document.getElementById('table-bantuan-body');
             bantuanBody.innerHTML = bantuanData.length === 0 ? `<tr><td colspan="9" class="text-center py-6 text-gray-400">Tidak ada data program bantuan pelatihan.</td></tr>` : '';
@@ -324,8 +347,9 @@
                         <td class="px-4 py-4 font-semibold text-gray-800">${b.program}</td>
                         <td class="px-4 py-4 text-center font-bold text-blue-700">${b.siswa} Siswa</td>
                         <td class="px-4 py-4">${b.tempat}</td>
-                        <td class="px-4 py-4 text-center aksi-kolom">
-                            <button onclick="deleteItem('lkp_bantuan_db', '${b.id}')" class="text-red-500 hover:text-red-700 cursor-pointer"><i class="fa-solid fa-trash"></i></button>
+                        <td class="px-4 py-4 text-center aksi-kolom flex justify-center gap-2 mt-2 border-none">
+                            <button onclick="editItem('bantuan', '${b.id}')" class="text-blue-500 hover:text-blue-700 cursor-pointer" title="Edit"><i class="fa-solid fa-pen-to-square"></i></button>
+                            <button onclick="deleteItem('lkp_bantuan_db', '${b.id}')" class="text-red-500 hover:text-red-700 cursor-pointer" title="Hapus"><i class="fa-solid fa-trash"></i></button>
                         </td>
                     </tr>`;
             });
@@ -340,7 +364,8 @@
                     <div><label class="block text-xs font-semibold text-gray-600 mb-1">Nama Lembaga</label><input type="text" id="nama" required class="w-full p-2 border border-gray-300 rounded-md text-sm bg-white"></div>
                     <div class="md:col-span-2"><label class="block text-xs font-semibold text-gray-600 mb-1">Alamat Lengkap</label><input type="text" id="alamat" required class="w-full p-2 border border-gray-300 rounded-md text-sm bg-white"></div>
                     <div><label class="block text-xs font-semibold text-gray-600 mb-1">Nama Pimpinan</label><input type="text" id="pimpinan" required class="w-full p-2 border border-gray-300 rounded-md text-sm bg-white"></div>
-                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Nilai Akreditasi</label><input type="text" id="akreditasi" placeholder="A / B / C" required class="w-full p-2 border border-gray-300 rounded-md text-sm bg-white"></div>
+                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Nilai Akreditasi</label><input type="text" id="akreditasi" placeholder="A / B / C / Tidak Terakreditasi" required class="w-full p-2 border border-gray-300 rounded-md text-sm bg-white"></div>
+                    <div><label class="block text-xs font-semibold text-gray-600 mb-1">Nomor SK Akreditasi</label><input type="text" id="noSkAkr" placeholder="Contoh: 123/BAN-PDM/SK/2024" required class="w-full p-2 border border-gray-300 rounded-md text-sm bg-white"></div>
                     <div><label class="block text-xs font-semibold text-gray-600 mb-1">Tahun Berakhir Akreditasi</label><input type="text" id="akhirAkr" required class="w-full p-2 border border-gray-300 rounded-md text-sm bg-white"></div>
                     <div><label class="block text-xs font-semibold text-gray-600 mb-1">Nomor Izin Operasional</label><input type="text" id="izinOp" required class="w-full p-2 border border-gray-300 rounded-md text-sm bg-white"></div>
                     <div><label class="block text-xs font-semibold text-gray-600 mb-1">Masa Berakhir Izin</label><input type="text" id="akhirIzin" required class="w-full p-2 border border-gray-300 rounded-md text-sm bg-white"></div>`;
@@ -355,7 +380,7 @@
                     <div><label class="block text-xs font-semibold text-gray-600 mb-1">Nama Program Pelatihan</label><input type="text" id="kkni_program" placeholder="Contoh: Operator Komputer" required class="w-full p-2 border border-gray-300 rounded-md text-sm bg-white"></div>
                     <div><label class="block text-xs font-semibold text-gray-600 mb-1">Jenjang Level KKNI</label><select id="kkni-level-select" class="w-full p-2 border border-gray-300 rounded-md text-sm bg-white"><option>Level 1</option><option>Level 2</option><option>Level 3</option><option>Level 4</option></select></div>
                     <div class="md:col-span-2"><label class="block text-xs font-semibold text-gray-600 mb-1">Keterangan Kesetaraan</label><input type="text" id="kkni_ket" placeholder="Contoh: Setara Operator Pelaksana Dasar" required class="w-full p-2 border border-gray-300 rounded-md text-sm bg-white"></div>`;
-            } else if (kategori === 'bantuan') { // Form Field Dinamis Baru
+            } else if (kategori === 'bantuan') {
                 container.innerHTML = `
                     <div><label class="block text-xs font-semibold text-gray-600 mb-1">NPSN Lembaga</label><input type="text" id="ban_npsn" required class="w-full p-2 border border-gray-300 rounded-md text-sm bg-white"></div>
                     <div><label class="block text-xs font-semibold text-gray-600 mb-1">Nama Lembaga</label><input type="text" id="ban_nama" required class="w-full p-2 border border-gray-300 rounded-md text-sm bg-white"></div>
@@ -371,28 +396,91 @@
         function saveData(e) {
             e.preventDefault();
             const kategori = document.getElementById('form-kategori').value;
-            const uniqueId = Date.now().toString();
+            const editId = document.getElementById('edit-id').value;
+            const dbName = `lkp_${kategori}_db`;
+            let db = getDB(dbName);
+
+            let payload = {};
+            if (editId) {
+                payload.id = editId;
+            } else {
+                payload.id = Date.now().toString();
+            }
 
             if (kategori === 'status') {
-                const db = getDB('lkp_status_db');
-                db.push({ id: uniqueId, npsn: document.getElementById('npsn').value, nama: document.getElementById('nama').value, alamat: document.getElementById('alamat').value, pimpinan: document.getElementById('pimpinan').value, akreditasi: document.getElementById('akreditasi').value, akhirAkr: document.getElementById('akhirAkr').value, izinOp: document.getElementById('izinOp').value, akhirIzin: document.getElementById('akhirIzin').value });
-                setDB('lkp_status_db', db);
+                Object.assign(payload, { npsn: document.getElementById('npsn').value, nama: document.getElementById('nama').value, alamat: document.getElementById('alamat').value, pimpinan: document.getElementById('pimpinan').value, akreditasi: document.getElementById('akreditasi').value, noSkAkr: document.getElementById('noSkAkr').value, akhirAkr: document.getElementById('akhirAkr').value, izinOp: document.getElementById('izinOp').value, akhirIzin: document.getElementById('akhirIzin').value });
             } else if (kategori === 'layanan') {
-                const db = getDB('lkp_layanan_db');
-                db.push({ id: uniqueId, npsn: document.getElementById('layanan_npsn').value, nama: document.getElementById('layanan_nama').value, layanan: document.getElementById('layanan_list').value });
-                setDB('lkp_layanan_db', db);
+                Object.assign(payload, { npsn: document.getElementById('layanan_npsn').value, nama: document.getElementById('layanan_nama').value, layanan: document.getElementById('layanan_list').value });
             } else if (kategori === 'kkni') {
-                const db = getDB('lkp_kkni_db');
-                db.push({ id: uniqueId, nama: document.getElementById('kkni_nama').value, program: document.getElementById('kkni_program').value, level: document.getElementById('kkni-level-select').value, ket: document.getElementById('kkni_ket').value });
-                setDB('lkp_kkni_db', db);
-            } else if (kategori === 'bantuan') { // Penyimpanan Kategori Baru
-                const db = getDB('lkp_bantuan_db');
-                db.push({ id: uniqueId, npsn: document.getElementById('ban_npsn').value, nama: document.getElementById('ban_nama').value, alamat: document.getElementById('ban_alamat').value, tahun: document.getElementById('ban_tahun').value, jenis: document.getElementById('ban_jenis').value, program: document.getElementById('ban_program').value, siswa: document.getElementById('ban_siswa').value, tempat: document.getElementById('ban_tempat').value });
-                setDB('lkp_bantuan_db', db);
+                Object.assign(payload, { nama: document.getElementById('kkni_nama').value, program: document.getElementById('kkni_program').value, level: document.getElementById('kkni-level-select').value, ket: document.getElementById('kkni_ket').value });
+            } else if (kategori === 'bantuan') {
+                Object.assign(payload, { npsn: document.getElementById('ban_npsn').value, nama: document.getElementById('ban_nama').value, alamat: document.getElementById('ban_alamat').value, tahun: document.getElementById('ban_tahun').value, jenis: document.getElementById('ban_jenis').value, program: document.getElementById('ban_program').value, siswa: document.getElementById('ban_siswa').value, tempat: document.getElementById('ban_tempat').value });
             }
-            document.getElementById('lkpForm').reset();
+
+            if (editId) {
+                db = db.map(item => item.id === editId ? payload : item);
+                alert("Data berhasil diperbarui!");
+            } else {
+                db.push(payload);
+                alert("Data berhasil disimpan!");
+            }
+
+            setDB(dbName, db);
+            cancelEdit();
+        }
+
+        function editItem(kategori, id) {
+            document.getElementById('form-container').classList.remove('hidden');
+            document.getElementById('form-kategori').value = kategori;
+            document.getElementById('form-kategori').disabled = true;
+            document.getElementById('edit-id').value = id;
+            document.getElementById('form-title').innerHTML = `<i class="fa-solid fa-pen-to-square text-orange-500 mr-2"></i>Mode Edit Data`;
+            document.getElementById('btn-batal-edit').classList.remove('hidden');
+            document.getElementById('btn-submit-form').innerText = "Perbarui Data";
+
             adaptFormFields();
-            alert("Data berhasil disimpan!");
+            const data = getDB(`lkp_${kategori}_db`).find(item => item.id === id);
+
+            if (kategori === 'status') {
+                document.getElementById('npsn').value = data.npsn || '';
+                document.getElementById('nama').value = data.nama || '';
+                document.getElementById('alamat').value = data.alamat || '';
+                document.getElementById('pimpinan').value = data.pimpinan || '';
+                document.getElementById('akreditasi').value = data.akreditasi || '';
+                document.getElementById('noSkAkr').value = data.noSkAkr || '';
+                document.getElementById('akhirAkr').value = data.akhirAkr || '';
+                document.getElementById('izinOp').value = data.izinOp || '';
+                document.getElementById('akhirIzin').value = data.akhirIzin || '';
+            } else if (kategori === 'layanan') {
+                document.getElementById('layanan_npsn').value = data.npsn || '';
+                document.getElementById('layanan_nama').value = data.nama || '';
+                document.getElementById('layanan_list').value = data.layanan || '';
+            } else if (kategori === 'kkni') {
+                document.getElementById('kkni_nama').value = data.nama || '';
+                document.getElementById('kkni_program').value = data.program || '';
+                document.getElementById('kkni-level-select').value = data.level || 'Level 1';
+                document.getElementById('kkni_ket').value = data.ket || '';
+            } else if (kategori === 'bantuan') {
+                document.getElementById('ban_npsn').value = data.npsn || '';
+                document.getElementById('ban_nama').value = data.nama || '';
+                document.getElementById('ban_alamat').value = data.alamat || '';
+                document.getElementById('ban_tahun').value = data.tahun || '';
+                document.getElementById('ban_jenis').value = data.jenis || 'PKK';
+                document.getElementById('ban_program').value = data.program || '';
+                document.getElementById('ban_siswa').value = data.siswa || '';
+                document.getElementById('ban_tempat').value = data.tempat || '';
+            }
+            window.scrollTo({ top: document.getElementById('form-container').offsetTop - 20, behavior: 'smooth' });
+        }
+
+        function cancelEdit() {
+            document.getElementById('lkpForm').reset();
+            document.getElementById('edit-id').value = '';
+            document.getElementById('form-kategori').disabled = false;
+            document.getElementById('form-title').innerHTML = `<i class="fa-solid fa-database text-green-600 mr-2"></i>Formulir Input Data`;
+            document.getElementById('btn-batal-edit').classList.add('hidden');
+            document.getElementById('btn-submit-form').innerText = "Simpan ke Storage";
+            adaptFormFields();
         }
 
         function deleteItem(dbName, id) {
@@ -407,6 +495,7 @@
                 localStorage.clear();
                 initDatabase();
                 renderAllData();
+                cancelEdit();
             }
         }
 
@@ -421,26 +510,35 @@
             downloadAnchor.remove();
         }
 
-        function importData(event) {
+        function importSingleCategory(event, dbName) {
             const file = event.target.files[0];
             if (!file) return;
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
                     const importedData = JSON.parse(e.target.result);
-                    if (importedData.status && importedData.layanan && importedData.kkni) {
-                        localStorage.setItem('lkp_status_db', JSON.stringify(importedData.status));
-                        localStorage.setItem('lkp_layanan_db', JSON.stringify(importedData.layanan));
-                        localStorage.setItem('lkp_kkni_db', JSON.stringify(importedData.kkni));
-                        if(importedData.bantuan) localStorage.setItem('lkp_bantuan_db', JSON.stringify(importedData.bantuan));
-                        renderAllData();
-                        alert("Semua database berhasil dipulihkan!");
+                    if (Array.isArray(importedData)) {
+                        // Validasi sederhana kecocokan properti kunci sesuai skema kualifikasi
+                        let isValid = true;
+                        if (dbName === 'lkp_status_db' && importedData.length > 0 && !('npsn' in importedData[0] && 'akreditasi' in importedData[0])) isValid = false;
+                        if (dbName === 'lkp_layanan_db' && importedData.length > 0 && !('layanan' in importedData[0])) isValid = false;
+                        if (dbName === 'lkp_kkni_db' && importedData.length > 0 && !('level' in importedData[0])) isValid = false;
+                        if (dbName === 'lkp_bantuan_db' && importedData.length > 0 && !('jenis' in importedData[0] && 'siswa' in importedData[0])) isValid = false;
+
+                        if (isValid) {
+                            localStorage.setItem(dbName, JSON.stringify(importedData));
+                            renderAllData();
+                            alert("Data kategori ini berhasil diperbarui/diimpor!");
+                        } else {
+                            alert("Format file JSON tidak cocok dengan skema kategori ini.");
+                        }
                     } else {
-                        alert("Berkas bukan format backup total yang valid.");
+                        alert("Data JSON harus berupa Array sesuai dengan format unduhan.");
                     }
-                } catch (err) { alert("Gagal membaca file JSON."); }
+                } catch (err) { alert("Gagal membaca atau mem-parsing file JSON."); }
             };
             reader.readAsText(file);
+            event.target.value = ''; // Reset input file
         }
 
         function switchTab(tabId) {
