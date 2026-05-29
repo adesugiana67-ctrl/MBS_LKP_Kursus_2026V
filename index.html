@@ -221,63 +221,47 @@
     <script>
         // 12 Data Master Lembaga Tiruan yang Selaras di Semua Kategori
         const initialStatus = [
-            { id: "1", npsn: "K5659720", nama: "LKP Family English Course (FEC)", alamat: "Jl. Raya Jatinangor No. 297, Desa Hegarmanah Kec. Jatinangor", pimpinan: "Dra. Sekarwati", akreditasi: "TT", akhirAkr: "2019", izinOp: "421.10/Kep/Dikbud/2016", akhirIzin: "2019" },
+            { id: "1", npsn: "K5659720", nama: "LKP Family English Course (FEC)", alamat: "Jl. Raya Jatinangor No. 297, Desa Hegarmanah Kec. Jatinangor", pimpinan: "Dra. SEKARWATI", akreditasi: "TT", akhirAkr: "2019", izinOp: "421.10/Kep/Dikbud/2016", akhirIzin: "2019" },
             { id: "2", npsn: "K5667263", nama: "LKP GANESHA PRATAMA", alamat: "Jalan P. Santri No. 78 Kel. Kota Kulon, Kec. Sumedang Selatan", pimpinan: "M. ARWAN AZIZ, ST", akreditasi: "B", akhirAkr: "2019", izinOp: "421.10/4115/Kep/Dikbud/2016", akhirIzin: "2019" },
-            { id: "3", npsn: "K5659729", nama: "LKP Komputer Dan Manajemen Actual ( LPKMA )", alamat: "Jl. P. Geusan Ulun No. 123 Kel. Kota Kulon, Kec. Sumedang Selatan", pimpinan: "Hj. ETr RUSMTATT, SE.,M.M", akreditasi: "B", akhirAkr: "2020", izinOp: "0160 Tahun 2026", akhirIzin: "2029" },
-            { id: "4", npsn: "K5654321", nama: "LKP KARYA JAYA BUSANA", alamat: "Jl. Mayor Abdurahman No. 112, Kec. Sumedang Utara", pimpinan: "Hj. Siti Aminah", akreditasi: "B", akhirAkr: "2026", izinOp: "421.10/1102/Disdik/2020", akhirIzin: "2027" },
-            { id: "5", npsn: "K5658888", nama: "LKP SEHAT MANDIRI HUSADA", alamat: "Jl. Pangeran Kornel No. 89, Kec. Sumedang Selatan", pimpinan: "dr. Hendra Kurnia", akreditasi: "C", akhirAkr: "2028", izinOp: "421.10/0543/Disdik/2022", akhirIzin: "2029" },
-            { id: "6", npsn: "K5659999", nama: "LKP OTOMOTIF JAYA MOTOR", alamat: "Jl. Raya Cimalaka No. 45, Kec. Cimalaka", pimpinan: "Asep Sunandar, ST", akreditasi: "TT", akhirAkr: "2025", izinOp: "421.10/0912/Disdik/2023", akhirIzin: "2026" },
-            { id: "7", npsn: "K5652211", nama: "LKP PARAMITHA BOGA", alamat: "Jl. Angkrek No. 12, Kec. Sumedang Utara", pimpinan: "Sri Lestari, S.Pd", akreditasi: "A", akhirAkr: "2030", izinOp: "421.10/1421/Disdik/2024", akhirIzin: "2029" },
-            { id: "8", npsn: "K5653322", nama: "LKP GLOBAL LINGUA CENTER", alamat: "Jl. Geusan Ulun No. 104, Kec. Sumedang Selatan", pimpinan: "Rian Hidayat, MA", akreditasi: "B", akhirAkr: "2027", izinOp: "421.10/0311/Disdik/2021", akhirIzin: "2026" },
-            { id: "9", npsn: "K5654433", nama: "LKP GRAHA MULTIMEDIA", alamat: "Jl. Raya Tanjungsari No. 56, Kec. Tanjungsari", pimpinan: "Dedi Setiadi, S.Kom", akreditasi: "B", akhirAkr: "2028", izinOp: "421.10/0852/Disdik/2022", akhirIzin: "2027" },
-            { id: "10", npsn: "K5655544", nama: "LKP KHALISA BEAUTY ACADEMY", alamat: "Jl. Prabu Taji Malela No. 22, Kec. Sumedang Utara", pimpinan: "Hj. Neneng Kartini", akreditasi: "A", akhirAkr: "2029", izinOp: "421.10/1204/Disdik/2023", akhirIzin: "2028" },
-            { id: "11", npsn: "K5656655", nama: "LKP KARYA TEKNIK MANDIRI", alamat: "Jl. Raya Wado No. 17, Kec. Wado", pimpinan: "Yayan Supriatna", akreditasi: "C", akhirAkr: "2027", izinOp: "421.10/0412/Disdik/2021", akhirIzin: "2025" },
-            { id: "12", npsn: "K5657766", nama: "LKP ASY SYIFA HERBALIS", alamat: "Jl. Raya Situraja No. 88, Kec. Situraja", pimpinan: "Ahmad Junaedi", akreditasi: "TT", akhirAkr: "2026", izinOp: "421.10/1033/Disdik/2024", akhirIzin: "2029" }
+            { id: "3", npsn: "K5659729", nama: "LKP Komputer Dan Manajemen Actual ( LPKMA )", alamat: "Jl. P. Geusan Ulun No. 123 Kel. Kota Kulon, Kec. Sumedang Selatan", pimpinan: "Hj. ETI RUSMTATY, SE.,M.M", akreditasi: "B", akhirAkr: "2020", izinOp: "0160 Tahun 2026", akhirIzin: "2029" },
+            { id: "4", npsn: "K5659731", nama: "LKP Puji Lestari", alamat: "Jl. P Geusan Ulun No. 50 B RT 04 / RW 05 Kel. Regolwetan kec. Sumedang selatan", pimpinan: " - ", akreditasi: "C", akhirAkr: "2021", izinOp: "-", akhirIzin: "-" },
+            { id: "5", npsn: "K5659740", nama: "LKP Yani 43 Sumedang", alamat: "Jl. Pendopo No. 17 Talun Rt 02 Rw 07 Kel. Talun, Kec. Sumedang Utara", pimpinan: "HALID INSAN TAUHID", akreditasi: "C", akhirAkr: "2024", izinOp: "0156 TA 2026", akhirIzin: "2029" },
+            { id: "6", npsn: "K5659762", nama: "LKP Prestatif", alamat: "Jl. Raya Cibeureum Wetan No. 422 Rt.01/05 Kec. Cimalaka", pimpinan: "ATI ROHAETI, M.Pd", akreditasi: "B", akhirAkr: "2021", izinOp: "0162 TA 2026", akhirIzin: "2029" },
+            { id: "7", npsn: "K9998989", nama: "LKP ENGLISH LANGUAGE PROGRAMS (ELP)", alamat: "Jl. Pagar Betis No. Terusan Kartini Kel. Cipameungpeuk, Kec. Sumedang Selatan", pimpinan: "Dr. ENANG AHMAD,M.Pd", akreditasi: "Belum Akreditasi", akhirAkr: "0", izinOp: "1038/2023", akhirIzin: "2026" },
+            { id: "8", npsn: "K9996789", nama: "LKP GANESHA OPERATION", alamat: "Jl. Kartini No. 10 Kel. Regol Wetan, Kec. Sumedang Selatan", pimpinan: "Ir. BOB FOSTER, MM", akreditasi: "Belum Akreditasi", akhirAkr: "0", izinOp: "421.10/Kep.56/2020", akhirIzin: "2023" },
+            { id: "9", npsn: "K5659773", nama: "LKP GOSFARO", alamat: "Jl. Kebon Seureh Rt. 03/03 No. 10, Kel. Cipameungpeuk Kec. Sumedang Selatan", pimpinan: "Apt. IKE MEYAWATI STIARINI, S.Si, M.Pd", akreditasi: "Belum Akreditasi", akhirAkr: "0", izinOp: "DK.02.01/36/IV/2022", akhirIzin: "2025" },
+            { id: "10", npsn: "K5668090", nama: "LKP GUSMUS THERAPY (GMT)", alamat: "Lingk. Bebedahan Rt. 04 Rw. 09, Kel Kota Kulon Kec. Sumedang Selatan", pimpinan: "AGUS MUSLIM, Acp", akreditasi: "Belum Akreditasi", akhirAkr: "0", izinOp: "421.10/Kep. 19/Disdik/2017", akhirIzin: "2020" },
+            { id: "11", npsn: "K5659734", nama: "LKP Citra Sarana Informatika", alamat: "Jl. Raya Wado No. 17, Kec. Wado", pimpinan: "Drs. EGI ZAENAL MUTAQIEN", akreditasi: "B", akhirAkr: "2021", izinOp: "421.10/0187/Kep/Disdik/2017", akhirIzin: "2020" },
+            { id: "12", npsn: "K5659736", nama: "LKP INGE", alamat: "Jl. Mayor Abdurachman No. 22, Kec. Situ Kec. Sumedang Utara", pimpinan: "Y.OTTO SUHANA", akreditasi: "B", akhirAkr: "2020", izinOp: "421.10/Kep. 60/Disdik/2017", akhirIzin: "2020" }
         ];
 
         const initialLayanan = [
             { id: "1", npsn: "K5659720", nama: "LKP Family English Course (FEC)", layanan: "General English, TOEFL Preparation, Conversation Class" },
             { id: "2", npsn: "K5667263", nama: "LKP GANESHA PRATAMA", layanan: "Teknisi Komputer, Jaringan Komputer, Administrasi Perkantoran" },
             { id: "3", npsn: "K5659729", nama: "LKP Komputer Dan Manajemen Actual ( LPKMA )", layanan: "Aplikasi Perkantoran, Desain Grafis, Web Programming" },
-            { id: "4", npsn: "K5654321", nama: "LKP KARYA JAYA BUSANA", layanan: "Tata Busana, Menjahit Dasar, Desain Mode / Fashion" },
-            { id: "5", npsn: "K5658888", nama: "LKP SEHAT MANDIRI HUSADA", layanan: "Pijat Refleksi, Akupresur, Perawatan Herbal Kesehatan" },
-            { id: "6", npsn: "K5659999", nama: "LKP OTOMOTIF JAYA MOTOR", layanan: "Teknisi Sepeda Motor, Mengemudi Mobil, Kelistrikan Otomotif" },
-            { id: "7", npsn: "K5652211", nama: "LKP PARAMITHA BOGA", layanan: "Pastry & Bakery, Tata Boga Nusantara, Dekorasi Kue Tart" },
-            { id: "8", npsn: "K5653322", nama: "LKP GLOBAL LINGUA CENTER", layanan: "Bahasa Jepang Dasar, Bahasa Korea Kerja (EPS-TOPIK), TOEFL ITP" },
-            { id: "9", npsn: "K5654433", nama: "LKP GRAHA MULTIMEDIA", layanan: "Editing Video, Animasi 2D/3D, Fotografi & Videografi" },
-            { id: "10", npsn: "K5655544", nama: "LKP KHALISA BEAUTY ACADEMY", layanan: "Tata Rias Pengantin, Tata Kecantikan Kulit, Hair Styling" },
-            { id: "11", npsn: "K5656655", nama: "LKP KARYA TEKNIK MANDIRI", layanan: "Las Listrik Argon, Teknik Konstruksi Baja, Gambar Manufaktur AutoCAD" },
-            { id: "12", npsn: "K5657766", nama: "LKP ASY SYIFA HERBALIS", layanan: "Akupunktur Dasar, Bekam Medis Steril, Racikan Ramuan Tradisional" }
+            { id: "4", npsn: "K5659731", nama: "LKP Puji Lestari", layanan: "Kursus Tata Busana" },
+            { id: "5", npsn: "K5659740", nama: "LKP Yani 43 Sumedang", layanan: "Kursus Menjahit" },
+            { id: "6", npsn: "K5659762", nama: "LKP Prestatif", layanan: "Kursus Tata Boga" },
+            { id: "7", npsn: "K9998989", nama: "LKP ENGLISH LANGUAGE PROGRAMS (ELP)", layanan: "Program Kursus Pendidikan" },
+            { id: "8", npsn: "K9996789", nama: "LKP GANESHA OPERATION", layanan: "Program Kursus Pendidikan" },
+            { id: "9", npsn: "K5659773", nama: "LKP GOSFARO", layanan: "Program Kursus Kependidikan" },
+            { id: "10", npsn: "K5668090", nama: "LKP GUSMUS THERAPY (GMT)", layanan: "Program Kesehatan, Akupuntur" },
+            { id: "11", npsn: "K5659734", nama: "LKP Citra Sarana Informatika", layanan: "Program Kursus Kependidikan" },
+            { id: "12", npsn: "K5659736", nama: "LKP INGE", layanan: "Tata Kecantikan Kulit" }
         ];
 
         const initialKkni = [
-            { id: "1", nama: "LKP Family English Course (FEC)", program: "General English", level: "Level 3", ket: "Setara Pelaksana Terampil" },
+            { id: "1", nama: "LKP Family English Course (FEC)", program: "General English", level: "Level 1", ket: "Setara Pelaksana Terampil" },
             { id: "2", nama: "LKP GANESHA PRATAMA", program: "Teknisi Komputer", level: "Level 2", ket: "Setara Operator Pelaksana Dasar" },
-            { id: "3", nama: "LKP Komputer Dan Manajemen Actual ( LPKMA )", program: "Desain Grafis", level: "Level 3", ket: "Setara Pelaksana Terampil" },
-            { id: "4", nama: "LKP KARYA JAYA BUSANA", program: "Tata Busana", level: "Level 2", ket: "Setara Operator Pelaksana Dasar" },
-            { id: "5", nama: "LKP SEHAT MANDIRI HUSADA", program: "Pijat Refleksi", level: "Level 2", ket: "Setara Operator Pelaksana Dasar" },
-            { id: "6", nama: "LKP OTOMOTIF JAYA MOTOR", program: "Teknisi Sepeda Motor", level: "Level 2", ket: "Setara Operator Pelaksana Dasar" },
-            { id: "7", nama: "LKP PARAMITHA BOGA", program: "Pastry & Bakery", level: "Level 3", ket: "Setara Pelaksana Terampil" },
-            { id: "8", nama: "LKP GLOBAL LINGUA CENTER", program: "Bahasa Jepang Dasar", level: "Level 2", text: "Setara Operator Pelaksana Dasar" },
-            { id: "9", nama: "LKP GRAHA MULTIMEDIA", program: "Editing Video", level: "Level 3", ket: "Setara Pelaksana Terampil" },
-            { id: "10", nama: "LKP KHALISA BEAUTY ACADEMY", program: "Tata Rias Pengantin", level: "Level 3", ket: "Setara Pelaksana Terampil" },
-            { id: "11", nama: "LKP KARYA TEKNIK MANDIRI", program: "Las Listrik Argon", level: "Level 2", ket: "Setara Operator Pelaksana Dasar" },
-            { id: "12", nama: "LKP ASY SYIFA HERBALIS", program: "Akupunktur Dasar", level: "Level 3", ket: "Setara Pelaksana Terampil" }
+            { id: "3", nama: "LKP Komputer Dan Manajemen Actual ( LPKMA )", program: "Desain Grafis", level: "Level 1", ket: "Setara operator Pelaksanaan Dasar" },
+            { id: "4", nama: "LKP Puji Lestari", program: "Teknis Tata Busana", level: "Level 2", ket: "Setara Operator Pelaksana Dasar" },
+            { id: "5", nama: "LKP Yani 43 Sumedang", program: "Teknis Menjahit", level: "Level 2", ket: "Setara Operator Pelaksana Dasar" },
+            { id: "6", nama: "LKP Prestatif", program: "Teknis Tata Boga", level: "Level 3", ket: "Setara Pelaksanaan Terampil" },
         ];
 
         const initialBantuan = [
-            { id: "1", npsn: "K5659720", nama: "LKP Family English Course (FEC)", alamat: "Jl. Raya Jatinangor No. 297, Desa Hegarmanah Kec. Jatinangor", tahun: "2025", jenis: "PKK", program: "English for Hospitality", siswa: "20", tempat: "Lab Bahasa LKP FEC" },
-            { id: "2", npsn: "K5667263", nama: "LKP GANESHA PRATAMA", alamat: "Jalan P. Santri No. 78 Kel. Kota Kulon, Kec. Sumedang Selatan", tahun: "2026", jenis: "PKW", program: "Teknisi Jaringan Fiber Optic", siswa: "25", tempat: "Workshop Jaringan Ganesha" },
-            { id: "3", npsn: "K5651234", nama: "LKP Komputer Dan Manajemen Actual ( LPKMA )", alamat: "Jl. P. Geusan Ulun No. 123 Kel. Kota Kulon, Kec. Sumedang Selatan", tahun: "2025", jenis: "PKK", program: "Desain Grafis Komputer", siswa: "25", tempat: "Aula LKP Sumedang Komputer" },
-            { id: "4", npsn: "K5654321", nama: "LKP KARYA JAYA BUSANA", alamat: "Jl. Mayor Abdurahman No. 112, Kec. Sumedang Utara", tahun: "2026", jenis: "PKW", program: "Couture Fashion & Menjahit", siswa: "20", tempat: "Studio Produksi Jaya Busana" },
-            { id: "5", npsn: "K5658888", nama: "LKP SEHAT MANDIRI HUSADA", alamat: "Jl. Pangeran Kornel No. 89, Kec. Sumedang Selatan", tahun: "2025", jenis: "PKK", program: "Refleksionis Tradisional", siswa: "30", tempat: "Klinik Utama Sehat Mandiri" },
-            { id: "6", npsn: "K5659999", nama: "LKP OTOMOTIF JAYA MOTOR", alamat: "Jl. Raya Cimalaka No. 45, Kec. Cimalaka", tahun: "2026", jenis: "PKW", program: "Tune Up Sepeda Motor Injeksi", siswa: "20", tempat: "Bengkel Mitra Jaya Motor" },
-            { id: "7", npsn: "K5652211", nama: "LKP PARAMITHA BOGA", alamat: "Jl. Angkrek No. 12, Kec. Sumedang Utara", tahun: "2025", jenis: "PKK", program: "Asisten Pembuat Patisserie", siswa: "25", tempat: "Dapur Produksi Paramitha" },
-            { id: "8", npsn: "K5653322", nama: "LKP GLOBAL LINGUA CENTER", alamat: "Jl. Geusan Ulun No. 104, Kec. Sumedang Selatan", tahun: "2026", jenis: "PKW", program: "Pendalaman Bahasa Kerja Kaigo", siswa: "20", tempat: "Ruang Multimedia Global Lingua" },
-            { id: "9", npsn: "K5654433", nama: "LKP GRAHA MULTIMEDIA", alamat: "Jl. Raya Tanjungsari No. 56, Kec. Tanjungsari", tahun: "2025", jenis: "PKK", program: "Content Creator & Video Editor", siswa: "30", tempat: "Studio Green Screen Graha" },
-            { id: "10", npsn: "K5655544", nama: "LKP KHALISA BEAUTY ACADEMY", alamat: "Jl. Prabu Taji Malela No. 22, Kec. Sumedang Utara", tahun: "2026", jenis: "PKW", program: "Wirausaha Rias Pengantin Sunda Siger", siswa: "20", tempat: "Beauty Lab Khalisa" },
-            { id: "11", npsn: "K5656655", nama: "LKP KARYA TEKNIK MANDIRI", alamat: "Jl. Raya Wado No. 17, Kec. Wado", tahun: "2025", jenis: "PKK", program: "Welding Operator SMAW 3G", siswa: "25", tempat: "Workshop Las Utama" },
-            { id: "12", npsn: "K5657766", nama: "LKP ASY SYIFA HERBALIS", alamat: "Jl. Raya Situraja No. 88, Kec. Situraja", tahun: "2026", jenis: "PKW", program: "Therapist Akupresur Mandiri", siswa: "20", tempat: "Aula Klinik Asy Syifa" }
+            { id: "1", npsn: "K5651234", nama: "LKP Komputer Dan Manajemen Actual ( LPKMA )", alamat: "Jl. P. Geusan Ulun No. 123 Kel. Kota Kulon, Kec. Sumedang Selatan", tahun: "2025", jenis: "PKW", program: "Desain Grafis Komputer", siswa: "25", tempat: "Aula LKP Sumedang Komputer" },
+            { id: "2", npsn: "K5659740", nama: "LKP Yani 43 Sumedang", alamat: "Jl. Pangeran Kornel No. 89, Kec. Sumedang Selatan", tahun: "2025", jenis: "PKW", program: "Refleksionis Tradisional", siswa: "30", tempat: "Aula Dinas Pendidikan Kab. Sumedang" },
         ];
 
         function initDatabase() {
